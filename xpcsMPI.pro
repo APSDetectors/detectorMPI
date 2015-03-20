@@ -15,6 +15,9 @@ QMAKE_CXXFLAGS += $$system(mpicxx --showme:compile) -DMPICH_IGNORE_CXX_SEEK -DUS
 QMAKE_CXXFLAGS_RELEASE += $$system(mpicxx --showme:compile) -DMPICH_IGNORE_CXX_SEEK
 
 
+INCLUDEPATH +=$$PWD/Common
+INCLUDEPATH +=$$PWD/XPCS
+
 
 
 QT       += core gui
@@ -27,46 +30,46 @@ TEMPLATE = app
 
 
 SOURCES +=\
-    mpicalcrunner.cpp \
-    mpimesgrecvr.cpp \
-    mpiengine.cpp \
-    imagequeueitem.cpp \
-    signalmessage.cpp \
-    mpiScatter.cpp \
-    mpiGather.cpp \
-    pipeReader.cpp \
-    pipewriter.cpp \
-    tinytiff.cpp \
-    pipebinaryformat.cpp \
-    imageStreamTest.cpp \
-    xpcsscatter.cpp \
-    xpcsgather.cpp \
-    mpixpcs.cpp \
-    main_xpcs.cpp \
-    imm.cpp \
-    xpcsgui.cpp
+    Common/mpicalcrunner.cpp \
+    Common/mpimesgrecvr.cpp \
+    Common/mpiengine.cpp \
+    XPCS/imagequeueitem.cpp \
+    XPCS/signalmessage.cpp \
+    Common/mpiScatter.cpp \
+    Common/mpiGather.cpp \
+    Common/pipeReader.cpp \
+    Common/pipewriter.cpp \
+    Common/tinytiff.cpp \
+    Common/pipebinaryformat.cpp \
+    Common/imageStreamTest.cpp \
+    XPCS/xpcsscatter.cpp \
+    XPCS/xpcsgather.cpp \
+    XPCS/mpixpcs.cpp \
+    XPCS/main_xpcs.cpp \
+    XPCS/imm.cpp \
+    XPCS/xpcsgui.cpp
 
 HEADERS  += \
-    mpicalcrunner.h \
-    mpimesgrecvr.h \
-    mpiengine.h \
-    imagequeueitem.h \
-    signalmessage.h \
-    mpiScatter.h \
-    mpiGather.h \
-    pipeReader.h \
-    pipewriter.h \
-    tinytiff.h \
-    pipebinaryformat.h \
-    mpixpcs.h \
-    xpcsgather.h \
-    xpcsscatter.h \
-    imm.h \
-    imm_header.h \
-    xpcsgui.h
+    Common/mpicalcrunner.h \
+    Common/mpimesgrecvr.h \
+    Common/mpiengine.h \
+    XPCS/imagequeueitem.h \
+    XPCS/signalmessage.h \
+    Common/mpiScatter.h \
+    Common/mpiGather.h \
+    Common/pipeReader.h \
+    Common/pipewriter.h \
+    Common/tinytiff.h \
+    Common/pipebinaryformat.h \
+    XPCS/mpixpcs.h \
+    XPCS/xpcsgather.h \
+    XPCS/xpcsscatter.h \
+    XPCS/imm.h \
+    XPCS/imm_header.h \
+    XPCS/xpcsgui.h
 
 FORMS    += \
-    xpcsgui.ui
+    XPCS/xpcsgui.ui
 
 
 

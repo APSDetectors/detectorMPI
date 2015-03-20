@@ -14,7 +14,8 @@ QMAKE_LFLAGS += $$system(mpicxx --showme:link)
 QMAKE_CXXFLAGS += $$system(mpicxx --showme:compile) -DMPICH_IGNORE_CXX_SEEK -DUSE_MPI
 QMAKE_CXXFLAGS_RELEASE += $$system(mpicxx --showme:compile) -DMPICH_IGNORE_CXX_SEEK
 
-
+INCLUDEPATH +=$$PWD/Common
+INCLUDEPATH +=$$PWD/DarkSub
 
 
 QT       += core gui
@@ -27,43 +28,43 @@ TEMPLATE = app
 
 
 SOURCES +=\
-    mpicalcrunner.cpp \
-    mpimesgrecvr.cpp \
-    main_mpi.cpp \
-    mpiengine.cpp \
-    imagequeueitem.cpp \
-    signalmessage.cpp \
-    mpiScatter.cpp \
-    mpicontrolgui.cpp \
-    mpiGather.cpp \
-    pipeReader.cpp \
-    mpidarksubtract.cpp \
-    pipewriter.cpp \
-    tinytiff.cpp \
-    mpiscatterdark.cpp \
-    pipebinaryformat.cpp \
-    imageStreamTest.cpp \
-    mpigatherdark.cpp
+    Common/mpicalcrunner.cpp \
+    Common/mpimesgrecvr.cpp \
+    DarkSub/main_mpi.cpp \
+    Common/mpiengine.cpp \
+    DarkSub/imagequeueitem.cpp \
+    DarkSub/signalmessage.cpp \
+    Common/mpiScatter.cpp \
+    DarkSub/mpicontrolgui.cpp \
+    Common/mpiGather.cpp \
+    Common/pipeReader.cpp \
+    DarkSub/mpidarksubtract.cpp \
+    Common/pipewriter.cpp \
+    Common/tinytiff.cpp \
+    DarkSub/mpiscatterdark.cpp \
+    Common/pipebinaryformat.cpp \
+    DarkSub/mpigatherdark.cpp \
+    Common/imageStreamTest.cpp
 
 HEADERS  += \
-    mpicalcrunner.h \
-    mpimesgrecvr.h \
-    mpiengine.h \
-    imagequeueitem.h \
-    signalmessage.h \
-    mpiScatter.h \
-    mpicontrolgui.h \
-    mpiGather.h \
-    pipeReader.h \
-    mpidarksubtract.h \
-    pipewriter.h \
-    tinytiff.h \
-    mpiscatterdark.h \
-    pipebinaryformat.h \
-    mpigatherdark.h
+    Common/mpicalcrunner.h \
+    Common/mpimesgrecvr.h \
+    Common/mpiengine.h \
+    DarkSub/imagequeueitem.h \
+    DarkSub/signalmessage.h \
+    Common/mpiScatter.h \
+    DarkSub/mpicontrolgui.h \
+    Common/mpiGather.h \
+    Common/pipeReader.h \
+    DarkSub/mpidarksubtract.h \
+    Common/pipewriter.h \
+    Common/tinytiff.h \
+    DarkSub/mpiscatterdark.h \
+    Common/pipebinaryformat.h \
+    DarkSub/mpigatherdark.h
 
 FORMS    += \
-    mpicontrolgui.ui
+    DarkSub/mpicontrolgui.ui
 
 
 
