@@ -11,15 +11,15 @@
 
 
 
-#ifndef xpcsGather_H
-#define xpcsGather_H
+#ifndef mpiGatherUser_H
+#define mpiGatherUser_H
 
 
 #include "mpiGather.h"
-class xpcsGather : public mpiGather
+class mpiGatherUser : public mpiGather
 {
 public:
-    xpcsGather(mpiEngine *mpi,imageQueue &dq, imageQueue &fq);
+    mpiGatherUser(mpiEngine *mpi,imageQueue &dq, imageQueue &fq);
 
     // call this after mpi gets BCast message, gui settings over bcast.
     // called on every image returned from mpi, just before we gather.
@@ -34,4 +34,4 @@ public slots:
 
 };
 
-#endif // xpcsGather_H
+#endif // mpiGatherUser_H

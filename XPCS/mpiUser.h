@@ -11,19 +11,19 @@
 
 
 
-#ifndef mpiXpcs_H
-#define mpiXpcs_H
+#ifndef mpiUser_H
+#define mpiUser_H
 
 #include "mpiengine.h"
 #include "signalmessage.h"
 
 #include "imm.h"
 
-class mpiXpcs : public mpiEngine
+class mpiUser : public mpiEngine
 {
 public:
-    mpiXpcs();
-    ~mpiXpcs();
+    mpiUser();
+    ~mpiUser();
 
 
     virtual void beforeCalcs(mpiBcastMessage &message);
@@ -64,4 +64,4 @@ virtual int parseMessage(mpiBcastMessage &message);
 
 };
 
-#endif // mpiXpcs_H
+#endif // mpiUser_H

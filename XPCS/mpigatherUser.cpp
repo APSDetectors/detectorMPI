@@ -11,9 +11,9 @@
 
 
 
-#include "xpcsgather.h"
+#include "mpigatherUser.h"
 
-xpcsGather::xpcsGather(mpiEngine *mpi,imageQueue &dq, imageQueue &fq) :
+mpiGatherUser::mpiGatherUser(mpiEngine *mpi,imageQueue &dq, imageQueue &fq) :
     mpiGather(mpi,dq,fq)
 {
 
@@ -22,14 +22,14 @@ xpcsGather::xpcsGather(mpiEngine *mpi,imageQueue &dq, imageQueue &fq) :
 }
 
 
-void xpcsGather::beforeGather(void)
+void mpiGatherUser::beforeGather(void)
 {
 
 }
 
 
 
-void xpcsGather::readPendingDatagrams()
+void mpiGatherUser::readPendingDatagrams()
 {
 
         //we cam put mmore stuff here...

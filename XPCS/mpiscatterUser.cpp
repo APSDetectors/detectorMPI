@@ -11,9 +11,9 @@
 
 
 
-#include "xpcsscatter.h"
+#include "mpiscatterUser.h"
 
-xpcsScatter::xpcsScatter(
+mpiScatterUser::mpiScatterUser(
         mpiEngine *mpi,
         imageQueue &free,
         imageQueue &data) :
@@ -28,7 +28,7 @@ xpcsScatter::xpcsScatter(
  ************************************************************************/
 
 
-xpcsScatter::~xpcsScatter()
+mpiScatterUser::~mpiScatterUser()
 {
 
 }
@@ -40,7 +40,7 @@ xpcsScatter::~xpcsScatter()
 // called by newImage slot, just after aw take new image off data_queue.
 // called just before we scatter to mpi ranks
 //
-void xpcsScatter::onDeFifo(imageQueueItem *item)
+void mpiScatterUser::onDeFifo(imageQueueItem *item)
 {
 
      mpi_message.imgspecs.inpt_img_cnt=item->specs->inpt_img_cnt;
@@ -51,7 +51,7 @@ void xpcsScatter::onDeFifo(imageQueueItem *item)
  *
  ************************************************************************/
 
-void xpcsScatter::beforeDeFifo(void)
+void mpiScatterUser::beforeDeFifo(void)
 {
 
     //
@@ -83,7 +83,7 @@ void xpcsScatter::beforeDeFifo(void)
  *
  ************************************************************************/
 
-void xpcsScatter::afterDeFifo(void)
+void mpiScatterUser::afterDeFifo(void)
 {
 
     mpi_message.imgs_in_infifo=data_queue.count();
@@ -104,7 +104,7 @@ void xpcsScatter::afterDeFifo(void)
  ************************************************************************/
 
 
-void   xpcsScatter:: gotMPIGuiSettings(guiSignalMessage mes_)
+void   mpiScatterUser:: gotMPIGuiSettings(guiSignalMessage mes_)
 {
     if (mes_.message.is_rst_in_queue)
     {

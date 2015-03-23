@@ -34,7 +34,6 @@ SOURCES +=\
     Common/mpimesgrecvr.cpp \
     Common/mpiengine.cpp \
     XPCS/imagequeueitem.cpp \
-    XPCS/signalmessage.cpp \
     Common/mpiScatter.cpp \
     Common/mpiGather.cpp \
     Common/pipeReader.cpp \
@@ -42,34 +41,37 @@ SOURCES +=\
     Common/tinytiff.cpp \
     Common/pipebinaryformat.cpp \
     Common/imageStreamTest.cpp \
-    XPCS/xpcsscatter.cpp \
-    XPCS/xpcsgather.cpp \
-    XPCS/mpixpcs.cpp \
-    XPCS/main_xpcs.cpp \
     XPCS/imm.cpp \
-    XPCS/xpcsgui.cpp
+    Common/signalmessage.cpp \
+    XPCS/mpiUser.cpp \
+    XPCS/mpigatherUser.cpp \
+    XPCS/mpiscatterUser.cpp \
+    XPCS/mpicontrolgui.cpp \
+    XPCS/signalmessageUser.cpp \
+    XPCS/main_mpi.cpp
 
 HEADERS  += \
     Common/mpicalcrunner.h \
     Common/mpimesgrecvr.h \
     Common/mpiengine.h \
     XPCS/imagequeueitem.h \
-    XPCS/signalmessage.h \
     Common/mpiScatter.h \
     Common/mpiGather.h \
     Common/pipeReader.h \
     Common/pipewriter.h \
     Common/tinytiff.h \
     Common/pipebinaryformat.h \
-    XPCS/mpixpcs.h \
-    XPCS/xpcsgather.h \
-    XPCS/xpcsscatter.h \
     XPCS/imm.h \
     XPCS/imm_header.h \
-    XPCS/xpcsgui.h
+    Common/signalmessage.h \
+    XPCS/signalmessageUser.h \
+    XPCS/mpiUser.h \
+    XPCS/mpigatherUser.h \
+    XPCS/mpicontrolgui.h \
+    XPCS/mpiscatterUser.h
 
 FORMS    += \
-    XPCS/xpcsgui.ui
+    XPCS/mpicontrolgui.ui
 
 
 

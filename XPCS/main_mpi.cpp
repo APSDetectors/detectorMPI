@@ -16,16 +16,16 @@
 //!TJM
 #ifdef USE_MPI
 
-#include "xpcsgui.h"
+#include "mpicontrolgui.h"
 #include "ui_xpcsgui.h"
 
 #include "mpiengine.h"
-#include "mpixpcs.h"
+#include "mpiUser.h"
 #include "mpiGather.h"
 
 #include "mpimesgrecvr.h"
-#include "xpcsscatter.h"
-#include "xpcsgather.h"
+#include "mpiscatterUser.h"
+#include "mpigatherUser.h"
 #include "pipeReader.h"
 #include "signalmessage.h"
 
@@ -86,7 +86,7 @@ fflush(stdout);
 
 
 
-    myMPI =new mpiXpcs();
+    myMPI =new mpiUser();
   myMPI->setupMPI(argc,argv);
 
 
@@ -156,9 +156,9 @@ int mpiBackMain(int argc, char *argv[])
     output_free_queue.fillQueue(100,1024*1024);
 
     QApplication a(argc, argv);
-    xpcsGui window(output_display_queue,output_free_queue);
+    mpiControlGui window(output_display_queue,output_free_queue);
 
-    xpcsGather gather(myMPI,output_data_queue,output_free_queue);
+    mpiGatherUser gather(myMPI,output_data_queue,output_free_queue);
 
     pipeWriter image_output(
                 output_data_queue,
@@ -255,7 +255,7 @@ int mpiFrontMain(int argc, char *argv[])
 
     input_free_queue.fillQueue(100,1024*1024);
 
-    xpcsScatter scatter(myMPI,input_free_queue,input_data_queue);
+    mpiScatterUser scatter(myMPI,input_free_queue,input_data_queue);
 
     pipeReader pipe_in(input_free_queue,input_data_queue);
     QThread pipe_thread;

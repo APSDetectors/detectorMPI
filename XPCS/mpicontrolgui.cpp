@@ -11,18 +11,18 @@
 
 
 
-#include "xpcsgui.h"
-#include "ui_xpcsgui.h"
+#include "mpiControlGui.h"
+#include "ui_mpiControlGui.h"
 #include <qmath.h>
 #include "stdio.h"
 #include "stdlib.h"
 
-xpcsGui::xpcsGui(
+mpiControlGui::mpiControlGui(
         imageQueue &data,
         imageQueue &free,
         QWidget *parent) :
     QMainWindow(parent),
-    ui(new Ui::xpcsGui),
+    ui(new Ui::mpiControlGui),
     current_gui_state(),
     free_queue(free),
     data_queue(data),
@@ -56,7 +56,7 @@ xpcsGui::xpcsGui(
 
 }
 
-xpcsGui::~xpcsGui()
+mpiControlGui::~mpiControlGui()
 {
     delete ui;
     delete[] draw_buff;
@@ -65,7 +65,7 @@ xpcsGui::~xpcsGui()
 
 
 
-void xpcsGui::drawImage(imageQueueItem *item)
+void mpiControlGui::drawImage(imageQueueItem *item)
 {
     // Decimate image to fit into draw buffer.
     //sqrt the image to make it 8 bits.
@@ -133,7 +133,7 @@ void xpcsGui::drawImage(imageQueueItem *item)
       ui->label_dispImage->setPixmap(QPixmap::fromImage(*dispImage));
 }
 // grey the disp image to clear it.
-void xpcsGui::clearImage()
+void mpiControlGui::clearImage()
 {
     for (int i=0;i<draw_img_xsize*draw_img_ysize;i++)
         draw_buff[i]=100;
@@ -141,7 +141,7 @@ void xpcsGui::clearImage()
     ui->label_dispImage->setPixmap(QPixmap::fromImage(*dispImage));
 }
 
-void xpcsGui::newImage(mpiSignalMessage mes)
+void mpiControlGui::newImage(mpiSignalMessage mes)
 {
 
     imageQueueItem *item;
@@ -169,7 +169,7 @@ void xpcsGui::newImage(mpiSignalMessage mes)
 
 
 
-void xpcsGui::updateText()
+void mpiControlGui::updateText()
 {
 
 
@@ -212,28 +212,28 @@ void xpcsGui::updateText()
 
 }
 
-void xpcsGui::on_radioButton_testimages_clicked(bool checked)
+void mpiControlGui::on_radioButton_testimages_clicked(bool checked)
 {
     current_gui_state.message.input_type=current_gui_state.message.is_input_testimgs;
 
 }
 
-void xpcsGui::on_radioButton_linuxpipe_clicked(bool checked)
+void mpiControlGui::on_radioButton_linuxpipe_clicked(bool checked)
 {
     current_gui_state.message.input_type=current_gui_state.message.is_input_pipe;
 }
 
-void xpcsGui::on_lineEdit_pipename_editingFinished()
+void mpiControlGui::on_lineEdit_pipename_editingFinished()
 {
 
 }
 
-void xpcsGui::on_lineEdit_pipename_textChanged(const QString &arg1)
+void mpiControlGui::on_lineEdit_pipename_textChanged(const QString &arg1)
 {
     strcpy(current_gui_state.message.inpipename,arg1.toStdString().c_str());
 }
 
-void xpcsGui::on_checkBox_pipeconnect_clicked(bool checked)
+void mpiControlGui::on_checkBox_pipeconnect_clicked(bool checked)
 {
     //if (checked)
     //    current_gui_state.message.command=current_gui_state.message.conn_input;
@@ -248,14 +248,14 @@ void xpcsGui::on_checkBox_pipeconnect_clicked(bool checked)
 
 }
 
-void xpcsGui::on_checkBox_avgdark_clicked(bool checked)
+void mpiControlGui::on_checkBox_avgdark_clicked(bool checked)
 {
     current_gui_state.message.is_acq_dark=checked;
     current_gui_state.message.command=current_gui_state.message.nop;
     emit guiState(current_gui_state);
 }
 
-void xpcsGui::on_lineEdit_ntoavg_textChanged(const QString &arg1)
+void mpiControlGui::on_lineEdit_ntoavg_textChanged(const QString &arg1)
 {
     current_gui_state.message.num_dark=arg1.toInt();
     current_gui_state.message.command=current_gui_state.message.nop;
@@ -263,45 +263,45 @@ void xpcsGui::on_lineEdit_ntoavg_textChanged(const QString &arg1)
 
 }
 
-void xpcsGui::on_checkBox_subdark_clicked(bool checked)
+void mpiControlGui::on_checkBox_subdark_clicked(bool checked)
 {
     current_gui_state.message.is_sub_dark=checked;
      current_gui_state.message.command=current_gui_state.message.nop;
      emit guiState(current_gui_state);
 }
 
-void xpcsGui::on_radioButton_tifffile_clicked(bool checked)
+void mpiControlGui::on_radioButton_tifffile_clicked(bool checked)
 {
     current_gui_state.message.output_type=current_gui_state.message.is_output_tiff;
 }
 
-void xpcsGui::on_lineEdit_tiffpath_textChanged(const QString &arg1)
+void mpiControlGui::on_lineEdit_tiffpath_textChanged(const QString &arg1)
 {
     strcpy(current_gui_state.message.tiffpath,arg1.toStdString().c_str());
 }
 
-void xpcsGui::on_lineEdit_tiffbasename_textChanged(const QString &arg1)
+void mpiControlGui::on_lineEdit_tiffbasename_textChanged(const QString &arg1)
 {
     strcpy(current_gui_state.message.tiffbasename,arg1.toStdString().c_str());
 
 }
 
-void xpcsGui::on_linEdit_tiffnumber_textChanged(const QString &arg1)
+void mpiControlGui::on_linEdit_tiffnumber_textChanged(const QString &arg1)
 {
     current_gui_state.message.tiffnumber=arg1.toInt();
 }
 
-void xpcsGui::on_radioButton_linuxOutPipe_clicked(bool checked)
+void mpiControlGui::on_radioButton_linuxOutPipe_clicked(bool checked)
 {
     current_gui_state.message.output_type=current_gui_state.message.is_output_pipe;
 }
 
-void xpcsGui::on_lineEdit_linuxOutpipeName_textChanged(const QString &arg1)
+void mpiControlGui::on_lineEdit_linuxOutpipeName_textChanged(const QString &arg1)
 {
     strcpy(current_gui_state.message.outpipename,arg1.toStdString().c_str());
 }
 
-void xpcsGui::on_pushButton_start_clicked()
+void mpiControlGui::on_pushButton_start_clicked()
 {
     clearImage();
     current_gui_state.message.command=current_gui_state.message.start_calcs;
@@ -309,24 +309,24 @@ void xpcsGui::on_pushButton_start_clicked()
     emit guiState(current_gui_state);
 }
 
-void xpcsGui::on_pushButton_stop_clicked()
+void mpiControlGui::on_pushButton_stop_clicked()
 {
     current_gui_state.message.command=current_gui_state.message.stop_calcs;
     //!!emit signal here
     emit guiState(current_gui_state);
 }
 
-void xpcsGui::on_pushButton_clicked()
+void mpiControlGui::on_pushButton_clicked()
 {
 
 }
 
-void xpcsGui::on_pushButton_10secpause_clicked()
+void mpiControlGui::on_pushButton_10secpause_clicked()
 {
 
 }
 
-void xpcsGui::on_checkBox_saveMPIRam_clicked(bool checked)
+void mpiControlGui::on_checkBox_saveMPIRam_clicked(bool checked)
 {
     current_gui_state.message.is_save_mpi_rams=checked;
     current_gui_state.message.command=current_gui_state.message.nop;
@@ -334,7 +334,7 @@ void xpcsGui::on_checkBox_saveMPIRam_clicked(bool checked)
     emit guiState(current_gui_state);
 }
 
-void xpcsGui::on_checkBox_isPrintTrace_clicked(bool checked)
+void mpiControlGui::on_checkBox_isPrintTrace_clicked(bool checked)
 {
     current_gui_state.message.is_print_trace=checked;
     current_gui_state.message.command=current_gui_state.message.nop;
@@ -342,7 +342,7 @@ void xpcsGui::on_checkBox_isPrintTrace_clicked(bool checked)
     emit guiState(current_gui_state);
 }
 
-void xpcsGui::on_checkBox_connOutputPipe_clicked(bool checked)
+void mpiControlGui::on_checkBox_connOutputPipe_clicked(bool checked)
 {
     if (checked)
         current_gui_state.message.command=current_gui_state.message.conn_output;
@@ -355,51 +355,51 @@ void xpcsGui::on_checkBox_connOutputPipe_clicked(bool checked)
    emit guiState(current_gui_state);
 }
 
-void xpcsGui::on_spinBox_imgSizeX_valueChanged(int arg1)
+void mpiControlGui::on_spinBox_imgSizeX_valueChanged(int arg1)
 {
     current_gui_state.message.size_x=arg1;
 }
 
 
-void xpcsGui::on_spinBox_imgSizeY_valueChanged(int arg1)
+void mpiControlGui::on_spinBox_imgSizeY_valueChanged(int arg1)
 {
     current_gui_state.message.size_y=arg1;
 }
 
-void xpcsGui::on_spinBox_numImgs_valueChanged(int arg1)
+void mpiControlGui::on_spinBox_numImgs_valueChanged(int arg1)
 {
     current_gui_state.message.num_images=arg1;
 }
 
-void xpcsGui::on_spinBox_imgPeriodMs_valueChanged(int arg1)
+void mpiControlGui::on_spinBox_imgPeriodMs_valueChanged(int arg1)
 {
     current_gui_state.message.test_img_period=arg1;
     current_gui_state.message.command=current_gui_state.message.nop;
     emit guiState(current_gui_state);
 }
 
-void xpcsGui::on_radioButton_nullOutput_clicked()
+void mpiControlGui::on_radioButton_nullOutput_clicked()
 {
     current_gui_state.message.output_type=current_gui_state.message.is_inout_null;
 }
 
-void xpcsGui::on_checkBox_isLimitNProcs_clicked(bool checked)
+void mpiControlGui::on_checkBox_isLimitNProcs_clicked(bool checked)
 {
     current_gui_state.message.is_limit_max_proc=checked;
 }
 
 
-void xpcsGui::on_spinBox_maxNumProcs_valueChanged(int arg1)
+void mpiControlGui::on_spinBox_maxNumProcs_valueChanged(int arg1)
 {
     current_gui_state.message.max_num_procs=arg1;
 }
 
-void xpcsGui::on_pushButton_10secpause_released()
+void mpiControlGui::on_pushButton_10secpause_released()
 {
     current_gui_state.message.is_block_10s=false;
 }
 
-void xpcsGui::on_pushButton_10secpause_pressed()
+void mpiControlGui::on_pushButton_10secpause_pressed()
 {
 
     current_gui_state.message.is_block_10s=true;
@@ -408,7 +408,7 @@ void xpcsGui::on_pushButton_10secpause_pressed()
     emit guiState(current_gui_state);
 }
 
-void xpcsGui::on_lineEdit_numStdThresh_textChanged(const QString &arg1)
+void mpiControlGui::on_lineEdit_numStdThresh_textChanged(const QString &arg1)
 {
     current_gui_state.message.num_std_thresh=arg1.toDouble();
     current_gui_state.message.command=current_gui_state.message.update_thresh;
@@ -420,26 +420,26 @@ void xpcsGui::on_lineEdit_numStdThresh_textChanged(const QString &arg1)
 
 }
 
-void xpcsGui::on_radioButton_noImm_clicked()
+void mpiControlGui::on_radioButton_noImm_clicked()
 {
     current_gui_state.message.is_raw_imm=false;
     current_gui_state.message.is_comp_imm=false;
 
 }
 
-void xpcsGui::on_radioButton_rawIMM_clicked()
+void mpiControlGui::on_radioButton_rawIMM_clicked()
 {
     current_gui_state.message.is_raw_imm=true;
     current_gui_state.message.is_comp_imm=false;
 }
 
-void xpcsGui::on_radioButton_compIMM_clicked()
+void mpiControlGui::on_radioButton_compIMM_clicked()
 {
     current_gui_state.message.is_raw_imm=false;
     current_gui_state.message.is_comp_imm=true;
 }
 
-void xpcsGui::on_comboBox_whichViewImg_currentIndexChanged(int index)
+void mpiControlGui::on_comboBox_whichViewImg_currentIndexChanged(int index)
 {
     current_gui_state.message.which_img_view=index;
 
@@ -449,12 +449,12 @@ void xpcsGui::on_comboBox_whichViewImg_currentIndexChanged(int index)
 
 }
 
-void xpcsGui::on_spinBox_inQueueLen_valueChanged(int arg1)
+void mpiControlGui::on_spinBox_inQueueLen_valueChanged(int arg1)
 {
     current_gui_state.message.input_queue_size_mb=arg1;
 }
 
-void xpcsGui::on_pushButton_resetInQueue_clicked()
+void mpiControlGui::on_pushButton_resetInQueue_clicked()
 {
     current_gui_state.message.is_rst_in_queue=true;
     current_gui_state.message.command=current_gui_state.message.nop;
@@ -503,7 +503,7 @@ void xpcsGui::on_pushButton_resetInQueue_clicked()
 
 }
 
-void xpcsGui::on_spinBox_outQueueLen_valueChanged(int arg1)
+void mpiControlGui::on_spinBox_outQueueLen_valueChanged(int arg1)
 {
     current_gui_state.message.output_queue_size_mb=arg1;
 }

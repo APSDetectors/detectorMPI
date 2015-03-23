@@ -11,8 +11,8 @@
 
 
 
-#ifndef xpcsGui_H
-#define xpcsGui_H
+#ifndef mpiControlGui_H
+#define mpiControlGui_H
 
 #include <QMainWindow>
 #include <QTime>
@@ -21,19 +21,19 @@
 #include "imagequeueitem.h"
 
 namespace Ui {
-class xpcsGui;
+class mpiControlGui;
 }
 
-class xpcsGui : public QMainWindow
+class mpiControlGui : public QMainWindow
 {
     Q_OBJECT
     
 public:
-    explicit xpcsGui(
+    explicit mpiControlGui(
             imageQueue &data,
             imageQueue &free,
             QWidget *parent = 0);
-    ~xpcsGui();
+    ~mpiControlGui();
     
 
     // time delay for disp image draw
@@ -158,7 +158,7 @@ private:
 
     mpiBcastMessage last_image_message;
 
-    Ui::xpcsGui *ui;
+    Ui::mpiControlGui *ui;
 
     imageQueue &free_queue;
     imageQueue &data_queue;
@@ -166,4 +166,4 @@ private:
 
 };
 
-#endif // xpcsGui_H
+#endif // mpiControlGui_H

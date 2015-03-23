@@ -11,9 +11,9 @@
 
 
 
-#include "mpixpcs.h"
+#include "mpiUser.h"
 
-mpiXpcs::mpiXpcs():
+mpiUser::mpiUser():
     mpiEngine(),
     my_imm(3000000)
 {
@@ -41,7 +41,7 @@ mpiXpcs::mpiXpcs():
 
 }
 
-mpiXpcs::~mpiXpcs()
+mpiUser::~mpiUser()
 {
 
 }
@@ -51,7 +51,7 @@ mpiXpcs::~mpiXpcs()
 // called by mpiScatter AFTER a new iomage comes in from detector,  after we dequeue it, after images
 // are scattered to rank, but just BEFORE we kick off mpi calcs. We set up broadcast message here.
 //
- void mpiXpcs::beforeCalcs(mpiBcastMessage &message)
+ void mpiUser::beforeCalcs(mpiBcastMessage &message)
  {
      message.mpi_image=false;
 
@@ -83,7 +83,7 @@ mpiXpcs::~mpiXpcs()
  // called by mpiScatter AFTER a new iomage comes in from detector,  after we dequeue it, after images
  // are scattered to rank, but just BEFORE we kick off mpi calcs. We set up broadcast message here.
  //
-  void mpiXpcs::beforeFirstCalc(mpiBcastMessage &message)
+  void mpiUser::beforeFirstCalc(mpiBcastMessage &message)
   {
       message.mpi_image=false;
       message.mpi_accum_darknoise =message.gui.is_acq_dark;
@@ -123,7 +123,7 @@ mpiXpcs::~mpiXpcs()
  //
  // Called in mpiGather, after all ranks have processed images, but BEFORE have gathered images to final rank.
  //
- void  mpiXpcs::afterCalcs(mpiBcastMessage &message)
+ void  mpiUser::afterCalcs(mpiBcastMessage &message)
  {
 
  }
@@ -135,7 +135,7 @@ mpiXpcs::~mpiXpcs()
  *
  **************************************************************************************************/
 
-int mpiXpcs::setupMPI2(int argc, char *argv[])
+int mpiUser::setupMPI2(int argc, char *argv[])
 {
 
 
@@ -153,10 +153,10 @@ int mpiXpcs::setupMPI2(int argc, char *argv[])
 
 
 
-void mpiXpcs::shutdownMPI2()
+void mpiUser::shutdownMPI2()
 {
 
-    printTrace("mpiXpcs::shutdownMPI2");
+    printTrace("mpiUser::shutdownMPI2");
 
     delete[] sdark_image;
     delete[] sthresh_image;
@@ -172,7 +172,7 @@ void mpiXpcs::shutdownMPI2()
 
 
 
-void mpiXpcs::calcThresh(void)
+void mpiUser::calcThresh(void)
 {
 
 
@@ -216,7 +216,7 @@ void mpiXpcs::calcThresh(void)
 
 }
 
-void mpiXpcs::reCalcThresh(void)
+void mpiUser::reCalcThresh(void)
 {
 
 
@@ -256,7 +256,7 @@ void mpiXpcs::reCalcThresh(void)
 
 
 
-void mpiXpcs::clearThresh(void)
+void mpiUser::clearThresh(void)
 {
 
 
@@ -282,7 +282,7 @@ void mpiXpcs::clearThresh(void)
 
 //called by all ranks after Bcast, so local class vars match message.
 // this gets called buy ALL ranks after gui is updated, and when we have new iamges.
-int mpiXpcs::parseMessage(mpiBcastMessage &message)
+int mpiUser::parseMessage(mpiBcastMessage &message)
 {
 
     // my_message gets updated from message  in mpiEngine::parseMessage
@@ -296,7 +296,7 @@ int mpiXpcs::parseMessage(mpiBcastMessage &message)
     // to allow instant update of thresholds
     if (my_message.gui.command==message.gui.update_thresh)
     {
-        printTrace("mpiXpcs::parseMessage- updated thresholds");
+        printTrace("mpiUser::parseMessage- updated thresholds");
         reCalcThresh();
     }
 
@@ -304,7 +304,7 @@ int mpiXpcs::parseMessage(mpiBcastMessage &message)
     // doub dark is cleared in parent class in parseMessage
     if (my_message.mpi_accum_specs)
     {
-        printTrace("mpiXpcs::parseMessage- clearing thresholds, setup for accum new darks");
+        printTrace("mpiUser::parseMessage- clearing thresholds, setup for accum new darks");
 
         // clear local mem for threshold and dark iage. both short data
         clearThresh();
@@ -325,7 +325,7 @@ int mpiXpcs::parseMessage(mpiBcastMessage &message)
 //dark sub into public_short_image[1]
 // imm compress into public_short_image[2]
 
-  int mpiXpcs::doImgCalcs(void)
+  int mpiUser::doImgCalcs(void)
    {
 
       //
@@ -344,7 +344,7 @@ int mpiXpcs::parseMessage(mpiBcastMessage &message)
    //  image_specs    - the specs of the image from the detector. also copied into my_message in super class.
     //is_calc_image - if true that means we have an image to calc in this rank.
 
-        printTrace("mpiXpcs::doImgCalcs================================================");
+        printTrace("mpiUser::doImgCalcs================================================");
 
 
                 //get img specs for public  iamge 0
@@ -408,7 +408,7 @@ int mpiXpcs::parseMessage(mpiBcastMessage &message)
 
             if (my_message.mpi_is_makeraw_imm)
             {
-                printTrace("mpiXpcs- making raw IMM\n");
+                printTrace("mpiUser- making raw IMM\n");
 
                 my_imm.rawToIMM(
                         (unsigned char*)public_short_image[0],
@@ -427,7 +427,7 @@ int mpiXpcs::parseMessage(mpiBcastMessage &message)
 
             if (my_message.mpi_is_makecomp_imm)
             {
-                printTrace("mpiXpcs- making comp IMM\n");
+                printTrace("mpiUser- making comp IMM\n");
                 my_imm.rawToCompIMM(
                         (unsigned char*)public_short_image[0],
                         img_num_pixels*sizeof(short),
@@ -505,7 +505,7 @@ int mpiXpcs::parseMessage(mpiBcastMessage &message)
             is_finish_darks=false;
         }
 
-        printTrace("mpiXpcs::doImgCalcs_______________________________________________");
+        printTrace("mpiUser::doImgCalcs_______________________________________________");
 
 
 return(1);
@@ -519,7 +519,7 @@ return(1);
     **************************************************************************************************/
 
   //in private, output piblic
-  void mpiXpcs::subDark(int whichimg)
+  void mpiUser::subDark(int whichimg)
   {
       printTrace("subDark");
 
