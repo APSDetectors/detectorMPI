@@ -1,6 +1,6 @@
-#include "mpiscatterhello.h"
+#include "mpiscatterUser.h"
 
-mpiScatterHello::mpiScatterHello(
+mpiScatterUser::mpiScatterUser(
         mpiEngine *mpi,
         imageQueue &free,
         imageQueue &data) :
@@ -15,7 +15,7 @@ mpiScatterHello::mpiScatterHello(
  ************************************************************************/
 
 
-mpiScatterHello::~mpiScatterHello()
+mpiScatterUser::~mpiScatterUser()
 {
 
 }
@@ -27,7 +27,7 @@ mpiScatterHello::~mpiScatterHello()
 // called by newImage slot, just after aw take new image off data_queue.
 // called just before we scatter to mpi ranks
 //
-void mpiScatterHello::onDeFifo(imageQueueItem *item)
+void mpiScatterUser::onDeFifo(imageQueueItem *item)
 {
 
      mpi_message.imgspecs.inpt_img_cnt=item->specs->inpt_img_cnt;
@@ -38,7 +38,7 @@ void mpiScatterHello::onDeFifo(imageQueueItem *item)
  *
  ************************************************************************/
 
-void mpiScatterHello::beforeDeFifo(void)
+void mpiScatterUser::beforeDeFifo(void)
 {
 
 
@@ -51,7 +51,7 @@ void mpiScatterHello::beforeDeFifo(void)
  *
  ************************************************************************/
 
-void mpiScatterHello::afterDeFifo(void)
+void mpiScatterUser::afterDeFifo(void)
 {
 
     mpi_message.imgs_in_infifo=data_queue.count();
@@ -72,12 +72,12 @@ void mpiScatterHello::afterDeFifo(void)
  ************************************************************************/
 
 
-void   mpiScatterHello:: gotMPIGuiSettings(guiSignalMessage mes_)
+void   mpiScatterUser:: gotMPIGuiSettings(guiSignalMessage mes_)
 {
 
     if (my_mpi->is_print_trace)
     {
-        printf("mpiScatterHello::gotMPIGuiSettings- got sig\n");
+        printf("mpiScatterUser::gotMPIGuiSettings- got sig\n");
         fflush(stdout);
     }
 

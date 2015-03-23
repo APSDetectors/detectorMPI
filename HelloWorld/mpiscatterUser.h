@@ -1,17 +1,17 @@
-#ifndef MPISCATTERHELLO_H
-#define MPISCATTERHELLO_H
+#ifndef MPISCATTERUser_H
+#define MPISCATTERUser_H
 
 #include "mpiScatter.h"
 
-class mpiScatterHello : public mpiScatter
+class mpiScatterUser : public mpiScatter
 {
 public:
-    mpiScatterHello(
+    mpiScatterUser(
             mpiEngine *mpi,
             imageQueue &free,
             imageQueue &data);
 
-    ~mpiScatterHello();
+    ~mpiScatterUser();
 
 public slots:
     virtual void    gotMPIGuiSettings(guiSignalMessage mes_);
@@ -26,4 +26,4 @@ protected:
 
 };
 
-#endif // mpiScatterHello_H
+#endif // mpiScatterUser_H

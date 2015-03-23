@@ -1,6 +1,6 @@
-#include "mpigatherhello.h"
+#include "mpigatherUser.h"
 
-mpiGatherHello::mpiGatherHello(mpiEngine *mpi,imageQueue &dq, imageQueue &fq) :
+mpiGatherUser::mpiGatherUser(mpiEngine *mpi,imageQueue &dq, imageQueue &fq) :
     mpiGather(mpi,dq,fq)
 {
 
@@ -13,7 +13,7 @@ mpiGatherHello::mpiGatherHello(mpiEngine *mpi,imageQueue &dq, imageQueue &fq) :
 
 
 
-void mpiGatherHello::readPendingDatagrams()
+void mpiGatherUser::readPendingDatagrams()
 {
 
         //we cam put mmore stuff here...

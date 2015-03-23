@@ -9,13 +9,13 @@
 #include "ui_mpicontrolgui.h"
 
 #include "mpiengine.h"
-#include "mpihello.h"
+#include "mpiUser.h"
 #include "mpiGather.h"
 
 #include "mpimesgrecvr.h"
-#include "mpiscatterhello.h"
+#include "mpiscatterUser.h"
 #include "pipeReader.h"
-#include "signalmessage.h"
+#include "signalmessageUser.h"
 
 #include "pipewriter.h"
 #include "mpicalcrunner.h"
@@ -34,7 +34,7 @@ int numprocs;
 
 #ifdef USE_MPI
 
-mpiHello *myMPI;
+mpiUser *myMPI;
 
 
 //
@@ -74,7 +74,7 @@ fflush(stdout);
 
 
 
-    myMPI =new mpiHello();
+    myMPI =new mpiUser();
   myMPI->setupMPI(argc,argv);
 
 
@@ -243,7 +243,7 @@ int mpiFrontMain(int argc, char *argv[])
 
     input_free_queue.fillQueue(100,1024*1024);
 
-    mpiScatterHello scatter(myMPI,input_free_queue,input_data_queue);
+    mpiScatterUser scatter(myMPI,input_free_queue,input_data_queue);
 
     pipeReader pipe_in(input_free_queue,input_data_queue);
     QThread pipe_thread;

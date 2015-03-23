@@ -16,6 +16,7 @@
 
 #include <QMetaType>
 
+#include "signalmessageUser.h"
 
 /***************************************************************************************
  *This is a message sent as a qt signal. the idea is to collect all of the settings of the gui
@@ -23,8 +24,6 @@
  *to keep design simple. This info will be translated into MPI messages sent between processes.
  * Put whatever you want as fields.
 /******************************************************************************************/
-
-
 
 
 
@@ -36,7 +35,7 @@
 // all this stuff reflects what is on the user interface. We collect all uiser interface
 // settings, and put into a message that can be a signal.
 //
-struct guiMessageFields
+struct guiMessageFields : public guiMessageFieldsUser
 {
 
     guiMessageFields();
@@ -59,9 +58,7 @@ conn_input,
 disconn_input,
 conn_output,
 disconn_output,
-nop,
-update_thresh
-};
+nop};
 
 
 //
@@ -74,19 +71,10 @@ mpi_command command;
 iosource input_type;
 iosource output_type;
 
-//calcs that mpi should do. any/all can be true/false
-bool is_acq_dark;
-int num_dark;
-bool is_sub_dark;
-
 
 bool is_print_trace;
 
-// for debugging mpi, saving mpi rams to files.
-bool is_save_mpi_rams;
 
-// debugging for 10s block of mpi
-bool is_block_10s;
 
 //if tiff oputptu, here is info
 char tiffpath[256];
@@ -111,16 +99,11 @@ int num_images;
 //test image period ms
 int test_img_period;
 
-// true of we limit nuim procs
-bool is_limit_max_proc;
-// num of proc to use max
-int max_num_procs;
+int is_acq_dark;
 
-
-
-//hello
-bool is_negative;
 };
+
+
 
 
 //
@@ -131,7 +114,7 @@ bool is_negative;
 
 
 
-struct newImgMessageFields
+struct newImgMessageFields : public newImgMessageFieldsUser
 {
 
     newImgMessageFields();
@@ -158,10 +141,9 @@ struct newImgMessageFields
 // a starting point is the gui settings, and image specs.
 //
 
-struct mpiBcastMessage
+struct mpiBcastMessage : public mpiBcastMessageUser
 {
     mpiBcastMessage();
-
     //orig gui settings
     guiMessageFields gui;
 

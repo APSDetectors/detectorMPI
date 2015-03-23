@@ -1,15 +1,15 @@
 
 
-#include "mpihello.h"
+#include "mpiUser.h"
 
-mpiHello::mpiHello():
+mpiUser::mpiUser():
     mpiEngine()
 {
 
 
 }
 
-mpiHello::~mpiHello()
+mpiUser::~mpiUser()
 {
 
 }
@@ -19,7 +19,7 @@ mpiHello::~mpiHello()
 // called by mpiScatter AFTER a new iomage comes in from detector,  after we dequeue it, after images
 // are scattered to rank, but just BEFORE we kick off mpi calcs. We set up broadcast message here.
 //
- void mpiHello::beforeCalcs(mpiBcastMessage &message)
+ void mpiUser::beforeCalcs(mpiBcastMessage &message)
  {
      message.mpi_image=false;
 
@@ -38,7 +38,7 @@ mpiHello::~mpiHello()
  // called by mpiScatter AFTER a new iomage comes in from detector,  after we dequeue it, after images
  // are scattered to rank, but just BEFORE we kick off mpi calcs. We set up broadcast message here.
  //
-  void mpiHello::beforeFirstCalc(mpiBcastMessage &message)
+  void mpiUser::beforeFirstCalc(mpiBcastMessage &message)
   {
       message.mpi_image=false;
 
@@ -66,11 +66,11 @@ mpiHello::~mpiHello()
 
 
 
-  int mpiHello::doImgCalcs(void)
+  int mpiUser::doImgCalcs(void)
    {
 
 
-        printTrace("mpiHello::doImgCalcs");
+        printTrace("mpiUser::doImgCalcs");
 
 
                 //get img specs for public  iamge 0

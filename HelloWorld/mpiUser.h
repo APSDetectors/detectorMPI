@@ -1,14 +1,14 @@
-#ifndef mpiHello_H
-#define mpiHello_H
+#ifndef mpiUser_H
+#define mpiUser_H
 
 #include "mpiengine.h"
 #include "signalmessage.h"
 
-class mpiHello : public mpiEngine
+class mpiUser : public mpiEngine
 {
 public:
-    mpiHello();
-    ~mpiHello();
+    mpiUser();
+    ~mpiUser();
 
 
     virtual void beforeCalcs(mpiBcastMessage &message);
@@ -28,4 +28,4 @@ public:
 
 };
 
-#endif // mpiHello_H
+#endif // mpiUser_H

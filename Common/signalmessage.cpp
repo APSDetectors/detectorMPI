@@ -20,7 +20,7 @@
 // Put whatever you want as fields.
 //
 
-guiMessageFields::guiMessageFields()
+guiMessageFields::guiMessageFields() : guiMessageFieldsUser()
 {
      command =  nop;
 
@@ -31,14 +31,11 @@ guiMessageFields::guiMessageFields()
 
     //calcs that mpi should do. any/all can be true/false
       is_acq_dark = false;
-      num_dark=10;
-      is_sub_dark=false;
+
 
       \
       is_print_trace=false;
-       is_save_mpi_rams=false;
 
-       is_block_10s=false;
 
     //if tiff oputptu, here is info
      strcpy( tiffpath,"/local");
@@ -67,18 +64,14 @@ guiMessageFields::guiMessageFields()
      test_img_period=1000;
 
 
-     // true of we limit nuim procs
-      is_limit_max_proc=false;
-     // num of proc to use max
-      max_num_procs=2;
 
 
-      is_negative=false;
 }
 
 
 guiMessageFields& guiMessageFields::operator=(const guiMessageFields& other)
 {
+
     command =  other.command;
 
    // use above enums for input source, out put source
@@ -88,12 +81,7 @@ guiMessageFields& guiMessageFields::operator=(const guiMessageFields& other)
 
    //calcs that mpi should do. any/all can be true/false
      is_acq_dark = other.is_acq_dark;
-     num_dark=other.num_dark;
-     is_sub_dark=other.is_sub_dark;
 
-
-     is_save_mpi_rams=other.is_save_mpi_rams;
-     is_block_10s=other.is_block_10s;
 
      is_print_trace=other.is_print_trace;
 
@@ -118,11 +106,6 @@ guiMessageFields& guiMessageFields::operator=(const guiMessageFields& other)
 
     test_img_period=other.test_img_period;
 
-    is_limit_max_proc=other.is_limit_max_proc;
-
-
-    // num of proc to use max
-     max_num_procs=other.max_num_procs;
 
      is_negative=other.is_negative;
 
@@ -131,7 +114,7 @@ guiMessageFields& guiMessageFields::operator=(const guiMessageFields& other)
 }
 
 
-newImgMessageFields::newImgMessageFields()
+newImgMessageFields::newImgMessageFields() :  newImgMessageFieldsUser()
 {
      size_x=0;
      size_y=0;
@@ -146,8 +129,9 @@ newImgMessageFields::newImgMessageFields()
 
 
 mpiBcastMessage::mpiBcastMessage() :
-    gui(),
-    imgspecs()
+        gui(),
+        imgspecs(),
+        mpiBcastMessageUser()
 {
 
 
