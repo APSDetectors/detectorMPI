@@ -154,7 +154,7 @@ int imgtype =0;
         if (imgtype==0)
         {
             noiseImage(size_x,size_y, imgdata);
-            if (k<nbackgnd)
+            if (k>nbackgnd)
                 addImg(size_x,size_y, imgdata,baseimage,imgdata);
             else
                 addImg(size_x,size_y, imgdata,backgndimage,imgdata);
