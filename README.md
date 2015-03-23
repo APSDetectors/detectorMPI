@@ -23,7 +23,13 @@ to see the origin on the web
 git remote -v
 
 To push your commits to github
+First you need to assicoate the repo w/ the github origin w/ username
+
 git remote set-url origin https://argonnexraydetector@github.com/argonnexraydetector/detectorMPI.git
+
+
+Below will push your git repo to the github
+git push origin
 You need the secret password..
 
 
