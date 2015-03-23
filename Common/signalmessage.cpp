@@ -72,6 +72,8 @@ guiMessageFields::guiMessageFields() : guiMessageFieldsUser()
 guiMessageFields& guiMessageFields::operator=(const guiMessageFields& other)
 {
 
+    guiMessageFieldsUser::operator=(other);
+
     command =  other.command;
 
    // use above enums for input source, out put source

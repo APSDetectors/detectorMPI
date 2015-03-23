@@ -41,7 +41,7 @@ struct guiMessageFieldsUser
 
     guiMessageFieldsUser();
 
-
+    guiMessageFieldsUser& operator=(const guiMessageFieldsUser& other);
 
 
 

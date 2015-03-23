@@ -29,7 +29,11 @@ guiMessageFieldsUser::guiMessageFieldsUser()
 
 
 
-
+guiMessageFieldsUser& guiMessageFieldsUser::operator =(const guiMessageFieldsUser &other)
+{
+    is_negative=other.is_negative;
+    return *this;
+}
 
 newImgMessageFieldsUser::newImgMessageFieldsUser()
 {
