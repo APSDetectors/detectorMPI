@@ -9,11 +9,11 @@
 #include "ui_mpicontrolgui.h"
 
 #include "mpiengine.h"
-#include "mpidarksubtract.h"
-#include "mpiGather.h"
+#include "mpiUser.h"
+#include "mpigatherUser.h"
 
 #include "mpimesgrecvr.h"
-#include "mpiscatterdark.h"
+#include "mpiscatterUser.h"
 #include "pipeReader.h"
 #include "signalmessage.h"
 
@@ -34,7 +34,7 @@ int numprocs;
 
 #ifdef USE_MPI
 
-mpiDarkSubtract *myMPI;
+mpiUser *myMPI;
 
 
 //
@@ -74,7 +74,7 @@ fflush(stdout);
 
 
 
-    myMPI =new mpiDarkSubtract();
+    myMPI =new mpiUser();
   myMPI->setupMPI(argc,argv);
 
 
@@ -146,7 +146,7 @@ int mpiBackMain(int argc, char *argv[])
     QApplication a(argc, argv);
     mpiControlGui window(output_display_queue,output_free_queue);
 
-    mpiGather gather(myMPI,output_data_queue,output_free_queue);
+    mpiGatherUser gather(myMPI,output_data_queue,output_free_queue);
 
     pipeWriter image_output(
                 output_data_queue,
@@ -243,7 +243,7 @@ int mpiFrontMain(int argc, char *argv[])
 
     input_free_queue.fillQueue(100,1024*1024);
 
-    mpiScatterDark scatter(myMPI,input_free_queue,input_data_queue);
+    mpiScatterUser scatter(myMPI,input_free_queue,input_data_queue);
 
     pipeReader pipe_in(input_free_queue,input_data_queue);
     QThread pipe_thread;

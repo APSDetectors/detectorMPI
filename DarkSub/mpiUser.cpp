@@ -1,8 +1,8 @@
 
 
-#include "mpidarksubtract.h"
+#include "mpiUser.h"
 
-mpiDarkSubtract::mpiDarkSubtract():
+mpiUser::mpiUser():
     mpiEngine()
 {
 
@@ -28,7 +28,7 @@ mpiDarkSubtract::mpiDarkSubtract():
 
 }
 
-mpiDarkSubtract::~mpiDarkSubtract()
+mpiUser::~mpiUser()
 {
 
 }
@@ -38,7 +38,7 @@ mpiDarkSubtract::~mpiDarkSubtract()
 // called by mpiScatter AFTER a new iomage comes in from detector,  after we dequeue it, after images
 // are scattered to rank, but just BEFORE we kick off mpi calcs. We set up broadcast message here.
 //
- void mpiDarkSubtract::beforeCalcs(mpiBcastMessage &message)
+ void mpiUser::beforeCalcs(mpiBcastMessage &message)
  {
      message.mpi_image=false;
 
@@ -62,7 +62,7 @@ mpiDarkSubtract::~mpiDarkSubtract()
  // called by mpiScatter AFTER a new iomage comes in from detector,  after we dequeue it, after images
  // are scattered to rank, but just BEFORE we kick off mpi calcs. We set up broadcast message here.
  //
-  void mpiDarkSubtract::beforeFirstCalc(mpiBcastMessage &message)
+  void mpiUser::beforeFirstCalc(mpiBcastMessage &message)
   {
       message.mpi_image=false;
       message.mpi_accum_darknoise =message.gui.is_acq_dark;
@@ -96,7 +96,7 @@ mpiDarkSubtract::~mpiDarkSubtract()
  //
  // Called in mpiGather, after all ranks have processed images, but BEFORE have gathered images to final rank.
  //
- void  mpiDarkSubtract::afterCalcs(mpiBcastMessage &message)
+ void  mpiUser::afterCalcs(mpiBcastMessage &message)
  {
 
  }
@@ -108,7 +108,7 @@ mpiDarkSubtract::~mpiDarkSubtract()
  *
  **************************************************************************************************/
 
-int mpiDarkSubtract::setupMPI2(int argc, char *argv[])
+int mpiUser::setupMPI2(int argc, char *argv[])
 {
 
 
@@ -120,10 +120,10 @@ int mpiDarkSubtract::setupMPI2(int argc, char *argv[])
 
 
 
-void mpiDarkSubtract::shutdownMPI2()
+void mpiUser::shutdownMPI2()
 {
 
-    printTrace("mpiDarkSubtract::shutdownMPI2");
+    printTrace("mpiUser::shutdownMPI2");
 
     delete[] sdark_image;
 
@@ -135,7 +135,7 @@ void mpiDarkSubtract::shutdownMPI2()
 
 
 
-void mpiDarkSubtract::calcThresh(void)
+void mpiUser::calcThresh(void)
 {
 
 
@@ -165,11 +165,11 @@ void mpiDarkSubtract::calcThresh(void)
 //dark sub into public_short_image[1]
 // imm compress into public_short_image[2]
 
-  int mpiDarkSubtract::doImgCalcs(void)
+  int mpiUser::doImgCalcs(void)
    {
 
 
-        printTrace("mpiDarkSubtract::doImgCalcs");
+        printTrace("mpiUser::doImgCalcs");
 
         // if we send new dark accum specs, clear the short dark iamge.
         // doub dark is cleared in parent class in parseMessage
@@ -247,7 +247,7 @@ return(1);
     **************************************************************************************************/
 
   //in private, output piblic
-  void mpiDarkSubtract::subDark(int whichimg)
+  void mpiUser::subDark(int whichimg)
   {
       printTrace("subDark");
 

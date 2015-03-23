@@ -1,17 +1,17 @@
-#ifndef MPISCATTERDARK_H
-#define MPISCATTERDARK_H
+#ifndef MPISCATTERUser_H
+#define MPISCATTERUser_H
 
 #include "mpiScatter.h"
 
-class mpiScatterDark : public mpiScatter
+class mpiScatterUser : public mpiScatter
 {
 public:
-    mpiScatterDark(
+    mpiScatterUser(
             mpiEngine *mpi,
             imageQueue &free,
             imageQueue &data);
 
-    ~mpiScatterDark();
+    ~mpiScatterUser();
 
 public slots:
     virtual void    gotMPIGuiSettings(guiSignalMessage mes_);
@@ -26,4 +26,4 @@ protected:
 
 };
 
-#endif // MPISCATTERDARK_H
+#endif // MPISCATTERUser_H

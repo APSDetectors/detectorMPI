@@ -1,14 +1,14 @@
-#ifndef MPIDARKSUBTRACT_H
-#define MPIDARKSUBTRACT_H
+#ifndef MPIUser_H
+#define MPIUser_H
 
 #include "mpiengine.h"
 #include "signalmessage.h"
 
-class mpiDarkSubtract : public mpiEngine
+class mpiUser : public mpiEngine
 {
 public:
-    mpiDarkSubtract();
-    ~mpiDarkSubtract();
+    mpiUser();
+    ~mpiUser();
 
 
     virtual void beforeCalcs(mpiBcastMessage &message);
@@ -42,4 +42,4 @@ public:
 
 };
 
-#endif // MPIDARKSUBTRACT_H
+#endif // MPIUser_H

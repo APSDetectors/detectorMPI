@@ -1,6 +1,6 @@
-#include "mpiscatterdark.h"
+#include "mpiscatterUser.h"
 
-mpiScatterDark::mpiScatterDark(
+mpiScatterUser::mpiScatterUser(
         mpiEngine *mpi,
         imageQueue &free,
         imageQueue &data) :
@@ -15,7 +15,7 @@ mpiScatterDark::mpiScatterDark(
  ************************************************************************/
 
 
-mpiScatterDark::~mpiScatterDark()
+mpiScatterUser::~mpiScatterUser()
 {
 
 }
@@ -27,7 +27,7 @@ mpiScatterDark::~mpiScatterDark()
 // called by newImage slot, just after aw take new image off data_queue.
 // called just before we scatter to mpi ranks
 //
-void mpiScatterDark::onDeFifo(imageQueueItem *item)
+void mpiScatterUser::onDeFifo(imageQueueItem *item)
 {
 
      mpi_message.imgspecs.inpt_img_cnt=item->specs->inpt_img_cnt;
@@ -38,7 +38,7 @@ void mpiScatterDark::onDeFifo(imageQueueItem *item)
  *
  ************************************************************************/
 
-void mpiScatterDark::beforeDeFifo(void)
+void mpiScatterUser::beforeDeFifo(void)
 {
 
     //
@@ -70,7 +70,7 @@ void mpiScatterDark::beforeDeFifo(void)
  *
  ************************************************************************/
 
-void mpiScatterDark::afterDeFifo(void)
+void mpiScatterUser::afterDeFifo(void)
 {
 
     mpi_message.imgs_in_infifo=data_queue.count();
@@ -91,12 +91,12 @@ void mpiScatterDark::afterDeFifo(void)
  ************************************************************************/
 
 
-void   mpiScatterDark:: gotMPIGuiSettings(guiSignalMessage mes_)
+void   mpiScatterUser:: gotMPIGuiSettings(guiSignalMessage mes_)
 {
 
     if (my_mpi->is_print_trace)
     {
-        printf("mpiScatterDark::gotMPIGuiSettings- got sig\n");
+        printf("mpiScatterUser::gotMPIGuiSettings- got sig\n");
         fflush(stdout);
     }
 
@@ -116,8 +116,8 @@ void   mpiScatterDark:: gotMPIGuiSettings(guiSignalMessage mes_)
         {
 
             my_mpi->beforeFirstCalc(mpi_message);
-            //clear dark images if acc dark image is turned on.
-            if (mpi_message.gui.is_acq_dark)
+            //clear User images if acc User image is turned on.
+            if (mpi_message.gui.is_acq_User)
             {
                 mpi_message.mpi_accum_specs=true;
                 sendMPISetup();

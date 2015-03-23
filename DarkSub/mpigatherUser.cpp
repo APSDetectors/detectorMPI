@@ -1,6 +1,6 @@
-#include "mpigatherdark.h"
+#include "mpigatherUser.h"
 
-mpiGatherDark::mpiGatherDark(mpiEngine *mpi,imageQueue &dq, imageQueue &fq) :
+mpiGatherUser::mpiGatherUser(mpiEngine *mpi,imageQueue &dq, imageQueue &fq) :
     mpiGather(mpi,dq,fq)
 {
 
@@ -13,7 +13,7 @@ mpiGatherDark::mpiGatherDark(mpiEngine *mpi,imageQueue &dq, imageQueue &fq) :
 
 
 
-void mpiGatherDark::readPendingDatagrams()
+void mpiGatherUser::readPendingDatagrams()
 {
 
         //we cam put mmore stuff here...

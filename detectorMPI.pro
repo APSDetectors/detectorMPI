@@ -33,35 +33,37 @@ SOURCES +=\
     DarkSub/main_mpi.cpp \
     Common/mpiengine.cpp \
     DarkSub/imagequeueitem.cpp \
-    DarkSub/signalmessage.cpp \
     Common/mpiScatter.cpp \
     DarkSub/mpicontrolgui.cpp \
     Common/mpiGather.cpp \
     Common/pipeReader.cpp \
-    DarkSub/mpidarksubtract.cpp \
     Common/pipewriter.cpp \
     Common/tinytiff.cpp \
-    DarkSub/mpiscatterdark.cpp \
     Common/pipebinaryformat.cpp \
-    DarkSub/mpigatherdark.cpp \
-    Common/imageStreamTest.cpp
+    Common/imageStreamTest.cpp \
+    Common/signalmessage.cpp \
+    DarkSub/signalmessageUser.cpp \
+    DarkSub/mpiUser.cpp \
+    DarkSub/mpigatherUser.cpp \
+    DarkSub/mpiscatterUser.cpp
 
 HEADERS  += \
     Common/mpicalcrunner.h \
     Common/mpimesgrecvr.h \
     Common/mpiengine.h \
     DarkSub/imagequeueitem.h \
-    DarkSub/signalmessage.h \
     Common/mpiScatter.h \
     DarkSub/mpicontrolgui.h \
     Common/mpiGather.h \
     Common/pipeReader.h \
-    DarkSub/mpidarksubtract.h \
     Common/pipewriter.h \
     Common/tinytiff.h \
-    DarkSub/mpiscatterdark.h \
     Common/pipebinaryformat.h \
-    DarkSub/mpigatherdark.h
+    Common/signalmessage.h \
+    DarkSub/signalmessageUser.h \
+    DarkSub/mpiUser.h \
+    DarkSub/mpigatherUser.h \
+    DarkSub/mpiscatterUser.h
 
 FORMS    += \
     DarkSub/mpicontrolgui.ui
