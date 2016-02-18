@@ -27,6 +27,7 @@ public:
     imageQueue &data_queue;
 
     mpiEngine *my_mpi;
+    bool is_lost_image;
  mpiBcastMessage my_message;
 public slots:
     virtual void getGuiSpecs(guiSignalMessage message);

@@ -170,9 +170,10 @@ mpiEngine::mpiEngine(QObject *parent) :
 
     int k;
 
+    int default_size = 1024*1024*8;
 
      pub_sh_img_nimgs=4;//default nimgs, determine size of memry. 4*pub_sh_img_size_bytes
-     pub_sh_img_size_bytes=1500000*sizeof(short);//def img size- large image. in pixels
+     pub_sh_img_size_bytes=default_size*sizeof(short);//def img size- large image. in pixels
      //if we pass several images to a rank, we line them up by img_spacing_shorts.
      //this is an offset from public_short_image[n] pointer  to an image.
       img_spacing_shorts=pub_sh_img_size_bytes/sizeof(short);
@@ -180,10 +181,11 @@ mpiEngine::mpiEngine(QObject *parent) :
 
 
        pub_db_img_nimgs=2;//default nimgs, determine size of memry. 4*pub_sh_img_size_bytes
-       pub_db_img_size_bytes=1500000*sizeof(double);//def img size- large image.
+       pub_db_img_size_bytes=default_size*sizeof(double);//def img size- large image.
       //bytes in rma memory for all proc...units are in shorts for puib_img_size2
 
 
+        rank_dark_accum_cnt=0;
 
        //if we pass several images to a rank, we line them up by img_spacing_shorts.
        //this is an offset from public_short_image[n] pointer  to an image.
@@ -212,7 +214,8 @@ mpiEngine::mpiEngine(QObject *parent) :
 
 
 
-
+    is_finish_darks_done=false;
+    is_finish_darks = false;
 
 }
 /*****************************************************************************************************
@@ -507,10 +510,14 @@ int mpiEngine::mpiOneLoop(mpiBcastMessage &message)
         mpiEngineRank0EditMessage( message);
 
        Bcast(&message,sizeof(message), 0);
-
+      // message gets copied to mymessage
        parseMessage(message);
 
         doImgCalcs();
+        //i think this is legal..as long as not const ref
+        // any changes in img calcs are applied to message
+        // message is later bcast
+        message=my_message;
 
     MPI_Barrier(MPI_COMM_WORLD);
 
@@ -790,9 +797,9 @@ void mpiEngine::gatherImage(int count, imageQueueItem *item,int which_image)
     // get img data
     getMPIData2(target,count, tar_offset,  item->img_data);
     //get img specs from pubimg 0
-    int tar_offset2 = (img_spacing_shorts * (scatgath_counter%num_imgs_per_rank)) +
-            item->specs->img_len_shorts;
+    // only one image will work...
 
+    int tar_offset2 = my_message.mpi_image_spec_offset_shorts;
 
     getMPIData2(target,(int)(imageSpecs::spec_len_short), tar_offset2, (unsigned short*) (item->specs));
 
@@ -974,8 +981,11 @@ void mpiEngine::scatterImage(imageQueueItem *item)
 
      //put raw img data to publiciage 0
     putMPIData2( target, count, tar_offset,item->img_data);
+
+    //onluy one image will work per rank
+    tar_offset = my_message.mpi_image_spec_offset_shorts;
     //put img specs just after img data.
-    putMPIData2( target, (int)(imageSpecs::spec_len_short), tar_offset+item->specs->img_len_shorts,(unsigned short*)(item->specs));
+    putMPIData2( target, (int)(imageSpecs::spec_len_short),tar_offset ,(unsigned short*)(item->specs));
 
     //scatgath_counter++;
 
@@ -1204,59 +1214,48 @@ void mpiEngine::hw_info()
 
 
 
-     if (message.mpi_is_print_trace)
+     if (my_message.mpi_is_print_trace)
          is_print_trace=true;
      else
          is_print_trace=false;
 
 
-     if (message.mpi_accum_specs)
+     if (my_message.mpi_accum_specs)
      {
          printf("Rank %d got accum specs\n",rank);
          fflush(stdout);
 
 
 
-         num_dark_integrate=message.num_dark_images_to_accum;
+         num_dark_integrate=my_message.num_dark_images_to_accum;
          clearDarks(0);
          dark_integrate_counter=0;
-
+        rank_dark_accum_cnt=0;
 
      }
 
 
-     //when we accum images, we set these vars,
-     if (message.mpi_accum_darknoise &&
-             dark_integrate_counter<num_dark_integrate)
-     {
-         is_acc_darks=true;
-         is_finish_darks=false;
-     }
 
-     if (!message.mpi_accum_darknoise)
-     {
-         is_acc_darks=false;
-         is_finish_darks=false;
-     }
 
-     int nimgs = message.num_images_to_calc;
-     num_images_to_calc=message.num_images_to_calc;
+     int nimgs = my_message.num_images_to_calc;
+     num_images_to_calc=my_message.num_images_to_calc;
 
-     image_counter_rank0=message.image_counter_rank0;
-     num_imgs_per_rank=message.num_imgs_per_rank;
+     image_counter_rank0=my_message.image_counter_rank0;
+     num_imgs_per_rank=my_message.num_imgs_per_rank;
 
 
     num_imgs2calc_thisrank=getNumImgs2CalcThisRank(nimgs);
 
-    is_calc_image=getIsCalc(nimgs) && message.mpi_image>0;
+    is_calc_image=getIsCalc(nimgs) && my_message.mpi_image>0;
 
+    num_images_to_acc_this_rank=0;
 
     num_images_to_acc_this_rank=calcNumDarksAcc(nimgs);
 
 
-    img_size_x = message.imgspecs.size_x;
-    img_size_y = message.imgspecs.size_y;
-    img_num_pixels = message.imgspecs.size_pixels;
+    img_size_x = my_message.imgspecs.size_x;
+    img_size_y = my_message.imgspecs.size_y;
+    img_num_pixels = my_message.imgspecs.size_pixels;
 
  }
 
@@ -1277,8 +1276,13 @@ void mpiEngine::hw_info()
 
 
      //get partial image from rank0. this is the raw img
-     count = img_size_x * img_size_y;
-
+     //!!count = img_size_x * img_size_y;
+     // this number is bcast from scatter...
+     // my_message is updated every mpiOneLoop, in parseMessage
+     // it will be equal to imageQueueItem::specs->img_len_shorts,
+     // which is malloc'ed mem size in shorts for img data.
+     //we store in public image the image data, followed by specs
+    count = my_message.mpi_image_spec_offset_shorts;
 
      //we shoudl be sending image specs and placing just after image data.
      //needed for imm comp definiately so we can oput a counter into corecotics in imm header
@@ -1333,6 +1337,8 @@ void mpiEngine::hw_info()
             //     public_short_image[which_sh_img][m]=sdki;
 
          }
+        rank_dark_accum_cnt++;
+
         // dark_integrate_counter++;
     }
 
@@ -1559,8 +1565,32 @@ int nimgs_this_rank=num_imgs2calc_thisrank;
 
    int num_imgs_to_acc=0;
 
+   is_acc_darks=false;
+   is_finish_darks=false;
 
+   //when we accum images, we set these vars,
+   if (my_message.mpi_accum_darknoise &&
+           dark_integrate_counter<num_dark_integrate)
+   {
+       is_acc_darks=true;
+       is_finish_darks=false;
+       is_finish_darks_done=false;
+   }
 
+   //if we want 10 images, and we have 9 done, accum one more and finish
+   if (!is_finish_darks_done && dark_integrate_counter>=num_dark_integrate-1 )
+   {
+       is_acc_darks=true;
+       is_finish_darks=true;
+        is_finish_darks_done=true;
+
+   }
+
+   if (!my_message.mpi_accum_darknoise)
+   {
+       is_acc_darks=false;
+       is_finish_darks=false;
+   }
 
 
 
@@ -1570,13 +1600,7 @@ int nimgs_this_rank=num_imgs2calc_thisrank;
 
          //in pri out pri
 
-         if (dark_integrate_counter>=num_dark_integrate )
-         {
-             is_acc_darks=false;
-             is_finish_darks=true;
 
-
-         }
 
          if (dark_integrate_counter<num_dark_integrate)
          {
@@ -1598,9 +1622,16 @@ int nimgs_this_rank=num_imgs2calc_thisrank;
              //N_too_many_darks>0
 
              int N_too_many_darks=dark_integrate_counter + nimgs - num_dark_integrate;
-
+            // if N_too_many_darks>0 we cut back ranks... if 0 or <0 all ranks acc.
+             int imgs_2_acc= nimgs - N_too_many_darks;
              // see if we were passed more images than we need to actually acc.
-             if (N_too_many_darks>0)
+
+             if (rank < imgs_2_acc)
+                 num_imgs_to_acc=nimgs_this_rank;
+             else
+                 num_imgs_to_acc=0;
+   #if 0
+           /*  if (N_too_many_darks>0)
              {
                 // here we drop off ranks. if nimg=1, nimprocs=2, N_too_many_darks=1 then NO ranks should calc.
                  //if nimgs=2, N_too_many_darks=2, and numprocs =2  then No ranks should calc.
@@ -1610,11 +1641,15 @@ int nimgs_this_rank=num_imgs2calc_thisrank;
                  // if how_many_ranks_acc=0, than no ranks calc.
                  //if how_many_ranks_acc<0, then no ranks calc.
                  // if how_many_ranks_acc=1, then rank 0 will calc.
-                 num_imgs_to_acc=nimgs_this_rank - N_too_many_darks;
-                 if (num_imgs_to_acc<0)
-                     num_imgs_to_acc=0;
 
+                 //!! this logic only works with 2 ranks...
+                 //!!num_imgs_to_acc=nimgs_this_rank - N_too_many_darks;
+                 //!!if (num_imgs_to_acc<0)
+                 //!!    num_imgs_to_acc=0;
 
+                    // assume nimgs_this_rank is 1 or 0.
+                 if (rank<N_too_many_darks)
+                     num_imgs_to_acc=nimgs_this_rank;
 
                  printTrace("Got too many darks ");
 
@@ -1623,7 +1658,8 @@ int nimgs_this_rank=num_imgs2calc_thisrank;
              else
              {
                  num_imgs_to_acc=nimgs_this_rank;
-             }
+             }*/
+#endif
 
              //becauseopther ranks are acc darks too, all ranks should keep track of how many dars have been accumed.
              dark_integrate_counter+=nimgs;
@@ -1637,7 +1673,21 @@ int nimgs_this_rank=num_imgs2calc_thisrank;
          }
      }
 
+     if (num_imgs_to_acc==0)
+         is_acc_darks=false;
+
      num_images_to_acc_this_rank=num_imgs_to_acc;
+
+     char msg[255];
+     sprintf(msg,"num_images_to_acc_this_rank %d,\nis_acc_darks %d,\n is_finish_darks %d,\nis_finish_darks_done,\n  num_dark_integrate %d,\ndark_integrate_counter %d \n",
+             num_images_to_acc_this_rank,
+             is_acc_darks,
+             is_finish_darks,
+             is_finish_darks_done,
+             num_dark_integrate,
+             dark_integrate_counter
+             );
+     printTrace(msg);
      return(num_imgs_to_acc);
  }
 

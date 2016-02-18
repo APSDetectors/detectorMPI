@@ -117,7 +117,7 @@ void   mpiScatterUser:: gotMPIGuiSettings(guiSignalMessage mes_)
 
             my_mpi->beforeFirstCalc(mpi_message);
             //clear User images if acc User image is turned on.
-            if (mpi_message.gui.is_acq_User)
+            if (mpi_message.gui.is_acq_dark)
             {
                 mpi_message.mpi_accum_specs=true;
                 sendMPISetup();

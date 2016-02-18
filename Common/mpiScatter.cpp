@@ -149,6 +149,11 @@ int mpiScatter::deFifoScatterImages(void)
          //send image to correct process w/ correct address offset based on number of
          //processes, number of images per rank.
          //my_mpi->scatterImage(data_block_size_pixels,item->img_data);
+          mpi_message.mpi_image_spec_offset_shorts=
+                  (my_mpi->pub_sh_img_size_bytes)/sizeof(short) - item->specs->spec_len_short;
+
+
+
          my_mpi->scatterImage(item);
 
         // inc an internal coujnter to keep track of how many iamges we scattered.
@@ -189,6 +194,10 @@ int mpiScatter::deFifoScatterImages(void)
 
 }
 
+void mpiScatter::lostImage()
+{
+
+}
 
 /*************************************************************************
  *
@@ -264,6 +273,8 @@ void mpiScatter::newImage(imageSignalMessage mes_)
 
 
     afterDeFifo();
+    mpi_message.imgs_in_infifo=data_queue.count();
+
 
   my_mpi->mpiOneLoop(mpi_message);
     //we are rank 0, so WE BCAST
@@ -328,7 +339,11 @@ void   mpiScatter:: gotMPIGuiSettings(guiSignalMessage mes_)
             {
                 mpi_message.mpi_accum_specs=true;
                 sendMPISetup();
+                // so we don't keep reseting darks on every message...
                 mpi_message.mpi_accum_specs=false;
+                // low mpi_accum_specs to all ranks so we don't keep zeroing darks.
+                // do we need this?
+                sendMPISetup();
 
             }
 

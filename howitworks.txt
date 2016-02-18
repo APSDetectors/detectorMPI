@@ -1,0 +1,124 @@
+GUI
+
+all buttons call a slot in mpicontrolgui
+
+each slot sets the button value into an object, inside of mpicontrolgui, called
+guiMessageFields settings i think. this object holds state of gui. when ever a gui emits
+a singal, the message is guiMessageFields, the state of gui.
+This message, guiMessageFields, is sent to all objects like pipe reader, pipe writer
+and all ranks.
+
+all process then get a copy of guiMessageFields, as sent from gui
+
+
+mpiEngine accepts signals guiMessageFields, then does MPI send of that obect.
+it is sent as a simple binary string of bytes, and we cast to guiMessageFields
+at MPI recv. this assume sthat endian is the same on all ranks.
+rank 1 runs gui and does mpi send to rank 0.
+
+at mpi receove on rank 0 turns the message back into a signal guiMessageFields.
+This is sent to the scatter object as a signal. mpiScatteruser
+
+mpiScatter calles setupMPI, which BCASTs to all ranks.
+The message used in BCAST is done for all new images, and gui settings
+for MPI ranks.
+
+The message is mpiBcastMessage. This message is
+two parts:
+the gui settings, a guiMessageFields, and image specs on comptued or raw imges
+which is newImgMessageFields. this is image specs like size etc. specs of image.
+
+There are more fields in mpiBcastMessage which are flags that turn on
+off mpi calcs and features on all ranks.
+
+The gui settings are translated into proper flags in mpiBcastMessage in
+mpiEngine::parseMessage. This takes the mpiBcastMessage and lools in
+mpiBcastMessage::guiMessageFields, the latest gui update, and figure out
+which flags are to be set.
+all ranks call parseMessage. it is called just after BCAST to figure out flags when
+gui settings are propagated to all ranks.
+
+Two other functiosn are called that set mpi flags in mpiBcastMessage
+mpiEngine::beforeFirstCalc- called when we hit START button to start MPI calcs.
+mpiEngine::beforeCalc- called when we dequeue new image to do mpi calcs on.
+all ranks call these.
+
+
+
+
+Data path:
+rank 0 starts data path.
+rank 0 uses pipeReader to get new data from a linux pipe. these are images.
+pipeReader enqueues new img on data queue. it emits signal imageSignalMessage
+
+scatter gets the imageSignalMessage signal
+it deques images, and img signals...as it dequees images it scatters them
+in deFifoScatterImages()
+mpiScatter::deFifoScatterImages , calles mpiEngine::fence and does MPI mem transfers to
+all ranks. i tries to fill uop all ranks, that is if we hae 10 ranks it tries
+to dequeue 10 frames and scatter all of them to ranks. it fences after scattering.
+
+Next scatter it calls mpiOneLoop. it constructs a mpiBcastMessage. it holds its
+own mpiBcastMessage, and updates flags etc and gui settings and img spacs.
+mpi_message.imgspecs=mes_.mes
+
+mpiOneLoop will bcast the mpiBcastMessage (img specs, mpi flags, and gui sets)
+to all ranks. all ranks parse the message in parseMessage
+then it calls doImgCalcs() in all ranks.
+
+All messages are defined in signalmessage and signalmessageUser.
+put universal stuff in signalmessage and app specific stuff in signalmessageUser.
+signal message inherits the sign message user, so all stuff is in the messages.
+
+There are 3 messages:
+gui- sent from gui to scatter to setup mpi. from gui to file writeer pipewrter.
+img specs = from pipe reader to scatter. f
+bcast = img specs + gui + mpi vars,  used between ranks in mpi calcs. gather sends it.
+pipewriter sends it.
+
+struct guiMessageFields
+struct newImgMessageFields
+struct mpiBcastMessage, has guiMessageFields, newImgMessageFields
+
+class guiSignalMessage, qt meta obj, has guiMessageFields
+class imageSignalMessage , qt meta obj, has newImgMessageFields
+class mpiSignalMessage, qt metaobj, has mpiBcastMessage
+
+
+scatter, accept guiSignalMessage,  mpiBcastMessage to mpiengine ranks
+
+main gui, send guiSignalMessage, accept mpiSignalMessage
+
+gather , accept mpiBcastMessage from rans, accept guiSignalMessage, send mpiSignalMessage
+
+pipereader, accept guiSignalMessage, send imageSignalMessage
+
+pipe writer, accept guiSignalMessage, send mpiSignalMessage, accept mpiSignalMessage
+
+mpiengine- accept and send mpiBcastMessage for BCAST. also does SEND/RCV of
+guiSignalMessage from rank 1 to rank 0.
+
+
+
+
+
+image sizes:
+memory size alloc in img queue item- img_len_shorts
+useful data in image q item- num_pixels. (or num of shorts)
+
+
+scattering:
+we scatter item.imglenshorts, to public image 0. we then scatter specs after imglenshorts.
+
+gathering
+we gather imglenshorts from pub image 0, then gather imgspecs in pubimg0 + imglenshorts
+
+
+messages on image specs are send across ranks (scatter/gather) in item->img specs
+no qt messages are sent....
+when gathering we have img info from gui and from img specs from the ranks
+when scattering we img data from gui(sent over mpi send/rcv) and from img specs from pipeReader
+pipereader also send a new img qt signal to scatter.
+
+
+

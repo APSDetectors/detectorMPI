@@ -42,15 +42,31 @@ struct guiMessageFieldsUser
     guiMessageFieldsUser();
     guiMessageFieldsUser& operator=(const guiMessageFieldsUser& other);
 
-enum {
-update_thresh=100
-};
-
 
 
 //calcs that mpi should do. any/all can be true/false
+    // gui, mpiuser, mpiscatter
+    //mpi user, before 1st calc, message.mpi_accum_darknoise =message.gui.is_acq_dark
+    // mpiscatter::gotMPIGuiSettings, calls stuff..
+    // set in gui widget
 bool is_acq_dark;
+
+//gui, and mpiUser
+// set in gui widget
+// mpiUser::beforeFirstCalc, message.num_dark_images_to_accum=message.gui.num_dark
 int num_dark;
+
+//set in gui to sub dark.
+// in mpiUser::beforeCalcs, and beforeFirstCalc,
+// message.mpi_sub_dark=message.gui.is_sub_dark
+// the issure here is this:
+// when subbing dark, the dark should be cleared when button is hit. then left alone.
+// dark counter shold be set to 0 on button hit, then be left alone.
+// There are two flags: mpi_accum_specs, which resets the darks. this should be done on
+// button hit only. should be set hi and sent to ranks, then set low and sent to ranks.
+// or else we keep zeroing the img. over and over
+// mpi_accum_darknoise- is high for doing actual accum. it can stay high, and once counter runs out
+// mpi_accum_darknoise has no effect. shouod be set high on bitton hit, but stauys hi.
 bool is_sub_dark;
 
 
@@ -59,7 +75,7 @@ bool is_save_mpi_rams;
 
 // debugging for 10s block of mpi
 bool is_block_10s;
-
+int ms_block_time;
 
 
 // true of we limit nuim procs
@@ -89,6 +105,18 @@ int input_queue_len_RBV;
 int output_queue_size_mb;
 bool is_rst_out_queue;
 int output_queue_len_RBV;
+
+bool is_descramble;
+bool is_flipendian;
+
+int display_time_ms;
+int update_text_time_ms;
+
+
+bool is_acq_dark_RBV;
+
+
+
 };
 
 
@@ -104,7 +132,7 @@ struct newImgMessageFieldsUser
 {
 
     newImgMessageFieldsUser();
-
+    newImgMessageFieldsUser& operator=(const newImgMessageFieldsUser& other);
 
 
 };
@@ -118,7 +146,7 @@ struct newImgMessageFieldsUser
 struct mpiBcastMessageUser
 {
     mpiBcastMessageUser();
-
+    mpiBcastMessageUser& operator=(const mpiBcastMessageUser& other);
 
 
 
@@ -131,6 +159,9 @@ struct mpiBcastMessageUser
     bool mpi_is_makeraw_imm;
     bool mpi_is_makecomp_imm;
 
+    bool mpi_is_flip_endian;
+
+    bool mpi_is_descramble;
     double mpi_num_std_thresh;
     int imm_bytes;
 

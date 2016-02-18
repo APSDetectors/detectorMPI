@@ -15,11 +15,13 @@
 #define PIPEWRITER_H
 
 #include <QObject>
+#include <QDir>
 #include "signalmessage.h"
 #include "tinytiff.h"
 #include "imagequeueitem.h"
 #include "pipebinaryformat.h"
 #include "stdio.h"
+#include "imm_header.h"
 
 
 class pipeWriter : public QObject
@@ -46,9 +48,14 @@ public slots:
     virtual void closePipe(void);
 protected:
 
+    volatile int capture_counter;
 
+    pipeBinaryFormat pwrite;
     // tiff writing object
     tinytiff tifWriter;
+
+    FILE *myfile;
+    bool is_file_open;
 
     // image data - copy from mpi image message
     mpiBcastMessage imgdata;
@@ -60,9 +67,20 @@ protected:
     imageQueue &data_queue;
     imageQueue &free_queue;
 
+
+    bool is_capture_started;
+    int file_number;
+    int init_frame_number;
+
     //output pipe- named linux pipe.
     FILE *pipe;
     bool is_pipe_open;
+
+    QString lastfilename;
+
+    int last_imm_buffer_number;
+
+    QDir directory;
     
 };
 

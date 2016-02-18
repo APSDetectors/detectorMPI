@@ -23,6 +23,7 @@ mpiGather::mpiGather(
 {
     my_mpi=mpi;
 
+    is_lost_image=false;
 }
 
 
@@ -93,6 +94,7 @@ int num_images_dequed=0;
     int imgy=0;
     int nimgs=0;
 imageQueueItem *item=0;
+is_lost_image=false;
     while(is_running)
     {
 
@@ -111,7 +113,7 @@ imageQueueItem *item=0;
 
         if (my_message.mpi_image)
         {
-
+            num_images_dequed=0;
             for (int imgk=0;imgk<my_message.num_images_to_calc;imgk++)
             {
                 if (free_queue.dequeueIfOk(&item))
@@ -119,13 +121,19 @@ imageQueueItem *item=0;
                     my_message.imgspecs.is_lost_images=false;
                 }
                 else
+                {
                     my_message.imgspecs.is_lost_images=true;
+                    is_lost_image=true;
+                }
 
                 if (!my_message.imgspecs.is_lost_images)
                 {
 
-                // num of pixels in image.
-                    item->specs->img_len_shorts=my_message.imgspecs.size_pixels;   
+                    if (is_lost_image)
+                        item->specs->error_code|4;
+
+                    // num of pixels in image.
+                    //!!item->specs->img_len_shorts=my_message.imgspecs.size_pixels;
                       my_mpi->gatherImage(item->specs->img_len_shorts,item,0);
                     //inc internal counter, used to keep track of which rank and me offset
                     // we get image from.
@@ -138,7 +146,7 @@ imageQueueItem *item=0;
         // we will gather if any image thru pipe, but we must fence no matter what
        my_mpi->fenceMPIData2();
 
-
+       my_message.images_in_fifo_mpi=data_queue.count();
 
        for (int ddk=0; ddk<num_images_dequed;ddk++)
         {

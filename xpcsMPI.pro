@@ -48,7 +48,9 @@ SOURCES +=\
     XPCS/mpiscatterUser.cpp \
     XPCS/mpicontrolgui.cpp \
     XPCS/signalmessageUser.cpp \
-    XPCS/main_mpi.cpp
+    XPCS/main_mpi.cpp \
+    XPCS/textcommander.cpp \
+    XPCS/argparse.cpp
 
 HEADERS  += \
     Common/mpicalcrunner.h \
@@ -68,10 +70,16 @@ HEADERS  += \
     XPCS/mpiUser.h \
     XPCS/mpigatherUser.h \
     XPCS/mpicontrolgui.h \
-    XPCS/mpiscatterUser.h
+    XPCS/mpiscatterUser.h \
+    XPCS/textcommander.h \
+    XPCS/argparse.h
 
 FORMS    += \
     XPCS/mpicontrolgui.ui
+
+OTHER_FILES += \
+    howitworks.txt \
+    XPCS/immcheck.py
 
 
 

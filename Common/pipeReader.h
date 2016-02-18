@@ -26,6 +26,7 @@
 #include <QMutexLocker>
 #include <QQueue>
 #include <stdio.h>
+#include <QTime>
 #include "pipebinaryformat.h"
 
 #include "imagequeueitem.h"
@@ -53,6 +54,7 @@ class pipeReader : public QObject
 
 
     volatile quint32 inpt_img_cnt;
+    volatile quint32 frame_number;
 
 
     pipeReader(
@@ -75,14 +77,17 @@ virtual void debugStreamImages(int numimages);
 
 signals:
     void newImageReady(imageSignalMessage data);
+    void lostImage();
 
 
 protected:
     //counter of test images
     int test_frame_number;
+    bool is_lost_image;
 
+    pipeBinaryFormat pread;
 
-
+    QTime sysclk;
 
     bool is_got_close_message;
     bool is_pipe_open;

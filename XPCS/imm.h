@@ -47,7 +47,7 @@ public:
         qint32 raw_x_pixels,
         qint32 raw_y_pixels,
         qint32 raw_timestamp,
-        qint32 img_index,
+        qint32 max_bytes,
         unsigned char* IMM_image,
         qint32 *IMM_bytes);
 
@@ -66,6 +66,14 @@ public:
         int *IMM_bytes);
 
 
+    void IMMtoRaw(
+            unsigned char* imm_image,
+            int max_outshorts,
+            unsigned short* outraw_image,
+            int *size_x,
+            int *size_y,
+            int *num_nonzr_pix,
+            int *corecotick);
 
    int max_image_bytes;
    unsigned char *imm_buffer;

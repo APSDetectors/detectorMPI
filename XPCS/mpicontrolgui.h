@@ -19,6 +19,7 @@
 #include <QTimer>
 #include "signalmessage.h"
 #include "imagequeueitem.h"
+#include "imm.h"
 
 namespace Ui {
 class mpiControlGui;
@@ -32,6 +33,7 @@ public:
     explicit mpiControlGui(
             imageQueue &data,
             imageQueue &free,
+            int text_params_type_ = 0,
             QWidget *parent = 0);
     ~mpiControlGui();
     
@@ -39,7 +41,10 @@ public:
     // time delay for disp image draw
      QTime dispTimer;
      //time delay for text update on gui.
-     QTimer dispTextTimer;
+    //!! QTime dispTextTimer;
+
+     QTime imageTimer;
+    int image_elapsed;
 
      // draws latest image on screen
     void drawImage(imageQueueItem *item);
@@ -64,13 +69,20 @@ void clearImage();
     // display image obj and coloar table
     QImage *dispImage;
     QVector<QRgb> colorTable;
-
+    //true if we need to update gui, like after image, or after new command.
+    bool is_need_gui_update;
+    bool is_need_settings_sendout;
 
 public slots:
 
     virtual void newImage(mpiSignalMessage mes);
     //update text on the gui
-    virtual void updateText();
+    virtual void updateText(void);
+
+    virtual void sendMessages();
+    void update_gui_from_settings();
+    void set_need_gui_update();
+    void set_need_settings_send();
 
 private slots:
     void on_radioButton_testimages_clicked(bool checked);
@@ -149,10 +161,51 @@ private slots:
 
     void on_spinBox_outQueueLen_valueChanged(int arg1);
 
+    void on_checkBox_descramble_clicked(bool checked);
+
+    void on_checkBox_flipendian_clicked(bool checked);
+
+
+
+    void on_pushButton_acqdarks_clicked();
+
+    void on_checkBox_infiniteInImgs_clicked(bool checked);
+
+    void on_radioButton_immFileOutput_clicked(bool checked);
+
+    void on_lineEdit_NumFiles2Capture_textEdited(const QString &arg1);
+
+    void on_pushButton_Capture_clicked();
+
+    void on_checkBox_captureInfiniteNum_clicked(bool checked);
+
+    void on_pushButton_StopCapture_clicked();
+
+    void on_checkBox_IncFileNum_clicked(bool checked);
+
+    void on_checkBox_bigStreamFile_clicked(bool checked);
+
+    void on_spinBox_msBlockTime_valueChanged(int arg1);
+
+    void on_spinBox_msDisplayTime_valueChanged(int arg1);
+
+    void on_lineEdit_brightness_returnPressed();
+
+    void on_lineEdit_contrast_returnPressed();
+
+    void on_lineEdit_brightness_textEdited(const QString &arg1);
+
+    void on_lineEdit_contrast_textEdited(const QString &arg1);
+
+    void on_checkBox_block_clicked(bool checked);
+
 signals:
     void guiState(guiSignalMessage mes);
+    void sendCommand(QString cmd);
 
 private:
+
+    void blockAllGuiSignals(bool is);
 
     guiSignalMessage current_gui_state;
 
@@ -164,6 +217,15 @@ private:
     imageQueue &data_queue;
 
 
+    imageSpecs last_img_specs;
+
+    //true if we need to update text on qui, and send out mesasges to update pvs etc...
+    volatile bool is_need_send_mess_disp_txt;
+
+    imm myimm;
+
+    //which text params to setnd out...
+    int text_params_type;
 };
 
 #endif // mpiControlGui_H

@@ -61,11 +61,11 @@ void mpiScatterUser::beforeDeFifo(void)
 
     if (mpi_message.gui.is_block_10s)
     {
-        mpi_message.gui.is_block_10s=false;
+        //!!mpi_message.gui.is_block_10s=false;
 
         printf("To block 10s\n");
         fflush(stdout);
-        usleep(10000000);
+        usleep(mpi_message.gui.ms_block_time *1000);
         printf("Done blocking\n");
         fflush(stdout);
     }
@@ -106,17 +106,27 @@ void mpiScatterUser::afterDeFifo(void)
 
 void   mpiScatterUser:: gotMPIGuiSettings(guiSignalMessage mes_)
 {
-    if (mes_.message.is_rst_in_queue)
+
+
+    //copy all stuff from mes_into our local copy. calls operator=...
+    mpi_message.gui=mes_.message;
+
+    //make sire we are not calcing an image
+    mpi_message.num_images_to_calc=0;
+    mpi_message.mpi_image=false;
+
+    if (mpi_message.gui.is_rst_in_queue)
     {
         printf("Resetting Input Queue\n");fflush(stdout);
 
         free_queue.emptyQueue();
-        int imgsizeshort=mes_.message.size_x * mes_.message.size_y;
+        int imgsizeshort=mpi_message.gui.size_x * mpi_message.gui.size_y;
         int oneMB=1024*1024;
-        int qlen = (mes_.message.input_queue_size_mb*oneMB)/(sizeof(short)*imgsizeshort);
+        int qlen = (mpi_message.gui.input_queue_size_mb*oneMB)/(sizeof(short)*imgsizeshort);
+        //!!int qlen = free_queue.num_fill_items;
         free_queue.fillQueue(qlen,imgsizeshort);
-
-        mes_.message.input_queue_len_RBV=qlen;
+        //!!free_queue.resizeQueue(imgsizeshort);
+        mpi_message.gui.input_queue_len_RBV=qlen;
 
         printf("Qlen %d Frames, Qsize %d MB, ImgSize %dMb",
                qlen,
@@ -125,6 +135,24 @@ void   mpiScatterUser:: gotMPIGuiSettings(guiSignalMessage mes_)
         fflush(stdout);
 
     }
+
+    if (mpi_message.gui.command==mpi_message.gui.ave_darks_now)
+    {
+
+        mpi_message.mpi_accum_specs=true;
+        mpi_message.mpi_accum_darknoise=true;
+        mpi_message.num_dark_images_to_accum=mpi_message.gui.num_dark;
+        mpi_message.gui.command=mpi_message.gui.nop;
+        sendMPISetup();
+        mpi_message.mpi_accum_specs=false;
+        sendMPISetup();
+
+        //mpi_message.gui.command=mpi_message.gui.nop;
+
+
+    }
+
+    mes_.message=mpi_message.gui;
 
     mpiScatter::gotMPIGuiSettings(mes_);
 

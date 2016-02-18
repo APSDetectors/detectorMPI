@@ -24,7 +24,7 @@
      </rect>
     </property>
     <property name="currentIndex">
-     <number>0</number>
+     <number>2</number>
     </property>
     <property name="iconSize">
      <size>
@@ -110,11 +110,14 @@
         <height>27</height>
        </rect>
       </property>
+      <property name="minimum">
+       <number>32</number>
+      </property>
       <property name="maximum">
        <number>2048</number>
       </property>
       <property name="singleStep">
-       <number>128</number>
+       <number>1</number>
       </property>
       <property name="value">
        <number>1024</number>
@@ -129,11 +132,14 @@
         <height>27</height>
        </rect>
       </property>
+      <property name="minimum">
+       <number>32</number>
+      </property>
       <property name="maximum">
        <number>2048</number>
       </property>
       <property name="singleStep">
-       <number>128</number>
+       <number>1</number>
       </property>
       <property name="value">
        <number>1024</number>
@@ -371,6 +377,19 @@
        <string>Out QueueSize</string>
       </property>
      </widget>
+     <widget class="QCheckBox" name="checkBox_infiniteInImgs">
+      <property name="geometry">
+       <rect>
+        <x>470</x>
+        <y>130</y>
+        <width>97</width>
+        <height>22</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Inf NImgs</string>
+      </property>
+     </widget>
     </widget>
     <widget class="QWidget" name="tab_2">
      <attribute name="title">
@@ -381,12 +400,12 @@
        <rect>
         <x>80</x>
         <y>60</y>
-        <width>201</width>
+        <width>221</width>
         <height>22</height>
        </rect>
       </property>
       <property name="text">
-       <string>Average Dark/Noise</string>
+       <string>Ave Dark/Noise on StartMPI</string>
       </property>
      </widget>
      <widget class="QCheckBox" name="checkBox_subdark">
@@ -488,6 +507,45 @@
       </property>
       <property name="text">
        <string>compIMM</string>
+      </property>
+     </widget>
+     <widget class="QCheckBox" name="checkBox_descramble">
+      <property name="geometry">
+       <rect>
+        <x>80</x>
+        <y>20</y>
+        <width>121</width>
+        <height>22</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Descramble</string>
+      </property>
+     </widget>
+     <widget class="QCheckBox" name="checkBox_flipendian">
+      <property name="geometry">
+       <rect>
+        <x>80</x>
+        <y>40</y>
+        <width>97</width>
+        <height>22</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Flipendian</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pushButton_acqdarks">
+      <property name="geometry">
+       <rect>
+        <x>330</x>
+        <y>60</y>
+        <width>161</width>
+        <height>27</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Ave Darks Now</string>
       </property>
      </widget>
     </widget>
@@ -635,35 +693,123 @@
        <string>No Output</string>
       </property>
      </widget>
+     <widget class="QRadioButton" name="radioButton_immFileOutput">
+      <property name="geometry">
+       <rect>
+        <x>200</x>
+        <y>50</y>
+        <width>114</width>
+        <height>22</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>IMM File</string>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="lineEdit_NumFiles2Capture">
+      <property name="geometry">
+       <rect>
+        <x>350</x>
+        <y>140</y>
+        <width>113</width>
+        <height>27</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_20">
+      <property name="geometry">
+       <rect>
+        <x>250</x>
+        <y>150</y>
+        <width>91</width>
+        <height>17</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>imgs Per File</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_NumCaptured_RBV">
+      <property name="geometry">
+       <rect>
+        <x>470</x>
+        <y>150</y>
+        <width>91</width>
+        <height>17</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>00000</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_fileNumberRBV">
+      <property name="geometry">
+       <rect>
+        <x>100</x>
+        <y>170</y>
+        <width>91</width>
+        <height>17</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>00000</string>
+      </property>
+     </widget>
+     <widget class="QCheckBox" name="checkBox_IncFileNum">
+      <property name="geometry">
+       <rect>
+        <x>410</x>
+        <y>110</y>
+        <width>181</width>
+        <height>22</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Inc FileNum</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_fullFileName_RBV">
+      <property name="geometry">
+       <rect>
+        <x>100</x>
+        <y>190</y>
+        <width>631</width>
+        <height>17</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>full filename</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_24">
+      <property name="geometry">
+       <rect>
+        <x>340</x>
+        <y>410</y>
+        <width>161</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>APS Luvs You!</string>
+      </property>
+     </widget>
     </widget>
     <widget class="QWidget" name="tab_5">
      <attribute name="title">
       <string>Debug</string>
      </attribute>
-     <widget class="QPushButton" name="pushButton_10secpause">
-      <property name="geometry">
-       <rect>
-        <x>110</x>
-        <y>80</y>
-        <width>98</width>
-        <height>27</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Block10s</string>
-      </property>
-     </widget>
      <widget class="QLabel" name="label_4">
       <property name="geometry">
        <rect>
-        <x>220</x>
-        <y>80</y>
+        <x>160</x>
+        <y>60</y>
         <width>381</width>
         <height>17</height>
        </rect>
       </property>
       <property name="text">
-       <string>Pause mpi proc. for 10s, to lset queues fill up</string>
+       <string>Pause mpi proc. for Nms, to lset queues fill up</string>
       </property>
      </widget>
      <widget class="QCheckBox" name="checkBox_saveMPIRam">
@@ -716,6 +862,38 @@
       </property>
       <property name="text">
        <string>Limit Max N Processes</string>
+      </property>
+     </widget>
+     <widget class="QSpinBox" name="spinBox_msBlockTime">
+      <property name="geometry">
+       <rect>
+        <x>220</x>
+        <y>80</y>
+        <width>81</width>
+        <height>27</height>
+       </rect>
+      </property>
+      <property name="maximum">
+       <number>100000</number>
+      </property>
+      <property name="singleStep">
+       <number>100</number>
+      </property>
+      <property name="value">
+       <number>1000</number>
+      </property>
+     </widget>
+     <widget class="QCheckBox" name="checkBox_block">
+      <property name="geometry">
+       <rect>
+        <x>120</x>
+        <y>80</y>
+        <width>86</width>
+        <height>21</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Block</string>
       </property>
      </widget>
     </widget>
@@ -794,8 +972,8 @@
      <widget class="QLabel" name="label_dispTextRight">
       <property name="geometry">
        <rect>
-        <x>530</x>
-        <y>30</y>
+        <x>540</x>
+        <y>20</y>
         <width>191</width>
         <height>301</height>
        </rect>
@@ -850,6 +1028,90 @@
        <string>Img2Return</string>
       </property>
      </widget>
+     <widget class="QSpinBox" name="spinBox_msDisplayTime">
+      <property name="geometry">
+       <rect>
+        <x>520</x>
+        <y>370</y>
+        <width>81</width>
+        <height>27</height>
+       </rect>
+      </property>
+      <property name="maximum">
+       <number>100000</number>
+      </property>
+      <property name="singleStep">
+       <number>100</number>
+      </property>
+      <property name="value">
+       <number>1000</number>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_21">
+      <property name="geometry">
+       <rect>
+        <x>400</x>
+        <y>370</y>
+        <width>111</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Disp Update ms</string>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="lineEdit_brightness">
+      <property name="geometry">
+       <rect>
+        <x>260</x>
+        <y>340</y>
+        <width>51</width>
+        <height>27</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>0</string>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="lineEdit_contrast">
+      <property name="geometry">
+       <rect>
+        <x>410</x>
+        <y>340</y>
+        <width>51</width>
+        <height>27</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>1.0</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_22">
+      <property name="geometry">
+       <rect>
+        <x>180</x>
+        <y>340</y>
+        <width>71</width>
+        <height>17</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Brightness</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_23">
+      <property name="geometry">
+       <rect>
+        <x>340</x>
+        <y>340</y>
+        <width>61</width>
+        <height>17</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Contrast</string>
+      </property>
+     </widget>
     </widget>
    </widget>
   </widget>
@@ -859,7 +1121,7 @@
      <x>0</x>
      <y>0</y>
      <width>800</width>
-     <height>25</height>
+     <height>19</height>
     </rect>
    </property>
   </widget>

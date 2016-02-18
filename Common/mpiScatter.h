@@ -65,6 +65,7 @@ public slots:
     virtual void    gotMPIGuiSettings(guiSignalMessage mes_);
 
        virtual void newImage(imageSignalMessage mes_);
+       virtual void lostImage();
 
  signals:
 

@@ -22,14 +22,30 @@ char pipeBinaryFormat::zzz[]="zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz
 
 pipeBinaryFormat::pipeBinaryFormat()
 {
+    message_code=0;
 }
 
 
+int pipeBinaryFormat::setMessage(int code)
+{
+    message_code = code;
+}
 
-int pipeBinaryFormat::checkErrors(int nread)
+
+int pipeBinaryFormat::checkErrors(int nread, FILE *f)
 {
     //return 1 for break out of here...
-    return(1);
+   // printf("nread %d\n",nread);
+
+    int err=ferror(f);
+    if (err)
+        printf("err = %d\n",err);
+
+    if (message_code)
+        return(message_code);
+
+
+    return(err);
 }
 
 
@@ -67,8 +83,11 @@ int pipeBinaryFormat::checkErrors(int nread)
          //read in 64 bytes, search for 1 z.
          nread = fread(zzz,1,64,fp);
 
-         if (nread!=64)
-             if (checkErrors(nread)!=0)
+
+
+
+
+        if (checkErrors(nread,fp)!=0)
                  return(-1);
 
 
@@ -103,8 +122,8 @@ int pipeBinaryFormat::checkErrors(int nread)
 
              nread = fread(zzz,1,N_rest_of_zs,fp);
 
-             if (nread!=N_rest_of_zs)
-                 if (checkErrors(nread)!=0)
+
+                 if (checkErrors(nread,fp)!=0)
                      return(-1);
 
 
@@ -134,28 +153,77 @@ int pipeBinaryFormat::checkErrors(int nread)
 
      nread=fread(&item->specs->size_x,4,1,fp);
 
-     if (nread!=1)
-         if (checkErrors(nread)!=0)
-             return(-1);;
+
+     if (checkErrors(nread,fp)!=0)
+         return(-1);;
 
 
      nread=fread(&item->specs->size_y,4,1,fp);
 
-     if (nread!=1)
-         if (checkErrors(nread)!=0)
+
+     if (checkErrors(nread,fp)!=0)
+         return(-1);
+
+     nread=fread(&item->specs->num_pixels,4,1,fp);
+
+
+     if (checkErrors(nread,fp)!=0)
+         return(-1);
+
+
+
+
+
+
+     nread=fread(&item->specs->frame_number,4,1,fp);
+
+
+     if (checkErrors(nread,fp)!=0)
+         return(-1);
+
+
+
+     nread=fread(&item->specs->inpt_img_cnt,4,1,fp);
+
+
+     if (checkErrors(nread,fp)!=0)
+         return(-1);
+
+
+
+     nread=fread(&item->specs->error_code,4,1,fp);
+
+
+         if (checkErrors(nread,fp)!=0)
              return(-1);
 
-     int n_s_pixels = item->specs->size_x * item->specs->size_y;
+
+     int n_s_pixels = item->specs->num_pixels;
      item->specs->img_len_shorts=n_s_pixels;
+
+     if (n_s_pixels > item->specs->mem_len_shorts)
+     {
+         // make sure there is some head room.. that is why we have 1024, because fread is 1k
+         item->specs->num_pixels = item->specs->mem_len_shorts-1024;
+         item->specs->img_len_shorts = item->specs->mem_len_shorts-1024;
+         n_s_pixels = item->specs->mem_len_shorts-1024;
+     }
 
      int total_read=0;
      unsigned short *ptr = item->img_data;
+     int num_to_read = 1024;
      do{
-         nread= fread(ptr,sizeof(short),1024,fp);
+         if((n_s_pixels-total_read)> 1024) {
+             num_to_read = 1024;
+         }
+         else {
+             num_to_read = n_s_pixels - total_read;
+         }
+         nread= fread(ptr,sizeof(short),num_to_read,fp);
 
-         if (nread!=1024)
-             if (checkErrors(nread)!=0)
-                 return(-1);
+
+         if (checkErrors(nread,fp)!=0)
+             return(-1);
 
          ptr+=nread;
          total_read+=nread;
@@ -165,7 +233,7 @@ int pipeBinaryFormat::checkErrors(int nread)
 
 
 
-         return(stat);
+         return(0);
 
  }
 
@@ -178,18 +246,29 @@ int pipeBinaryFormat::checkErrors(int nread)
     unsigned short *imgdata = item->img_data;
     int size_x = item->specs->size_x;
     int size_y = item->specs->size_y;
+    int num_shorts = item->specs->num_pixels;
 
+    int cam_frame_number = item->specs->frame_number;
+    int sw_frame_number = item->specs->inpt_img_cnt;
+    int error_code = item->specs->error_code;
 
      //write zzz's
      fwrite(pipeBinaryFormat::zzz,1,64,fp);
      //write image size x,y
      fwrite(&size_x,4,1,fp);
      fwrite(&size_y,4,1,fp);
+     fwrite(&num_shorts,4,1,fp);
+
+     fwrite(&cam_frame_number,4,1,fp);
+     fwrite(&sw_frame_number,4,1,fp);
+     fwrite(&error_code,4,1,fp);
+
+
      //
      //write image data
     //
 
-     int numpix = size_x*size_y;
+     int numpix = num_shorts;
      int nwrite = 0;
      int total_write = 0;
      do

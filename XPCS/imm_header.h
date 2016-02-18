@@ -29,7 +29,7 @@ qint32	     		monitor;    //0
 qint32	     		shutter;    //0
 qint32	     		row_beg;    //
 qint32	   		row_end;      // whatever they are
-qint32	     		col_beg;
+qint32	     		col_beg;//fseek 31
 qint32	   		col_end;
 qint32	     		row_bin;      //1
 qint32	     		col_bin;      //1
@@ -45,7 +45,7 @@ qint32	     		inject;       //0
  quint32	     		dlen;
 qint32	     		roi_number;   //1
 
-qint32	  	buffer_number;	//0
+qint32	  	buffer_number;	// byte 160
 quint32	  	systick;//0
 
 quint8	   		pv1[40];
@@ -75,8 +75,8 @@ float	   		CPUspeed;     //0
 enum {immver=12};
 
 qint32	     		immversion;   //immver
-qint32		  corecotick;   //
-qint32	     		cameratype;//160
+qint32		  corecotick;   //620
+qint32	     		cameratype;//
 float	   		threshhold;   //my val
 
 //here is 632 bytes- or byte 0 to 631

@@ -1,0 +1,19 @@
+ 
+sleep 999999 > /local/xpcscmdin &
+sleep 99999 < /local/xpcscmdout &
+
+
+sleep 999999 < /local/xpcscmdin &
+sleep 999999 < /local/xpcscmdout &
+
+sleep 99999 > /local/madpipe &
+sleep 99999 < /local/madpipe &
+
+xterm -e "cat /local/xpcscmdout" &
+
+mpiexec -n 2 xterm -e ../build-xpcsMPI-mpi-Debug/xpcsMPI
+
+
+pkill -f sleep
+
+

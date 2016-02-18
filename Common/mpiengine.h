@@ -172,7 +172,8 @@ public:
         //this is an offset from public_short_image[n] pointer  to an image.
         int img_spacing_doubles;
 
-
+        //eacg rank count num darks he accums
+        int rank_dark_accum_cnt;
 
        //
         //
@@ -308,6 +309,9 @@ int getNumImgs2CalcThisRank(int nimgs);
 
 // true if image accum is done amd we meed to combine partial sums across ranks
 bool is_finish_darks;
+// true of we have already finished darks
+bool is_finish_darks_done;
+
 // true if we need  to accum images.
 bool is_acc_darks;
 //total num of images to accum, desired num iamges to accum

@@ -11,13 +11,13 @@
 
 
 #include "signalmessage.h"
-
+#include <QApplication>
 
 //!TJM
 #ifdef USE_MPI
 
 #include "mpicontrolgui.h"
-#include "ui_xpcsgui.h"
+
 
 #include "mpiengine.h"
 #include "mpiUser.h"
@@ -32,6 +32,9 @@
 #include "pipewriter.h"
 #include "mpicalcrunner.h"
 #include "mpi.h"
+#include "textcommander.h"
+#include "argparse.h"
+
 // mpic++ -m64 /usr/lib64/libtiff.so -L/home/mpi/madden/mpi_lld -Wl,-rpath,/home/epicsioc/QTStuff/qt4.8/lib -o CINController main.o mainwindow.o controlportthread.o streaminport.o imageprocessor.o debugwindow.o waveformgui.o biasclocksgui.o networking.o descramble_block.o tiff_maker.o remote.o fccd_caller.o moc_mainwindow.o moc_controlportthread.o moc_imageprocessor.o moc_waveformgui.o moc_biasclocksgui.o moc_streaminport.o    -L/home/epicsioc/QTStuff/qt4.8/lib -lQtGui -L/home/epicsioc/QTStuff/qt4.8/lib -L/usr/X11R6/lib64 -lQtNetwork -lQtCore -lpthread -lsufeng
 
 #endif
@@ -46,7 +49,7 @@ int numprocs;
 
 #ifdef USE_MPI
 
-mpiXpcs *myMPI;
+mpiUser *myMPI;
 
 
 //
@@ -95,14 +98,14 @@ fflush(stdout);
   fflush(stdout);
   //!! or debugging- so we can get debugger conn before anything happens
   char dbg[256];
- //!! gets(dbg);
+  //!!gets(dbg);
 
 
 
   printf("Start debugger and hit regurn\n");
   fflush(stdout);
 
-//  gets(debugstr);
+ //!!gets(debugstr);
 
 
     if (myMPI->rank==0)
@@ -122,6 +125,7 @@ fflush(stdout);
 
         //mpiMesgRecvr recv_thread(0,myMPI);
         //recv_thread.start();
+        QThread::currentThread()->setPriority(QThread::HighestPriority);
         myMPI->mpiCalcLoop();
 
 
@@ -153,10 +157,21 @@ int mpiBackMain(int argc, char *argv[])
     imageQueue output_display_queue;
 
 
-    output_free_queue.fillQueue(100,1024*1024);
+    argParse settings;
 
     QApplication a(argc, argv);
-    mpiControlGui window(output_display_queue,output_free_queue);
+
+
+    settings.parseArgs(a.arguments());
+
+    settings.report();
+
+     output_free_queue.fillQueue(
+                 settings.file_q_length,
+                 settings.x_size*settings.y_size);
+
+
+    mpiControlGui window(output_display_queue,output_free_queue,settings.textsend_params);
 
     mpiGatherUser gather(myMPI,output_data_queue,output_free_queue);
 
@@ -165,8 +180,9 @@ int mpiBackMain(int argc, char *argv[])
                 output_display_queue);
 
     QThread pipe_thread;
-
+    pipe_thread.setObjectName("mpiPipeOut");
     QThread gather_thread;
+    gather_thread.setObjectName("mpiGather");
 
     //
     // Connect signals/slots
@@ -228,8 +244,88 @@ int mpiBackMain(int argc, char *argv[])
 
 
    window.show();
-    gather_thread.start();
+   gather_thread.start(QThread::HighestPriority);
     pipe_thread.start();
+
+
+
+    textCommander commander(
+                settings.cmd_in_pipe_name,
+                settings.cmd_out_pipe_name);
+
+    QThread cmd_thread;
+    cmd_thread.setObjectName("mpiTextCommander");
+    commander.moveToThread(&cmd_thread);
+    cmd_thread.start();
+
+    commander.addNameObject("window",&window);
+    commander.addNameObject("gather",&gather);
+    commander.addNameObject("image_output",&image_output);
+    commander.addNameObject("myMPI",myMPI);
+
+    commander.setAppName("xpcsMPI");
+
+    //invoke signal on the window thread, because the commander
+    // is blocked waiting or commands.
+    commander.connect(
+                &window,
+                SIGNAL(sendCommand(QString)),
+                SLOT(sendCommand(QString)),
+                Qt::DirectConnection);
+
+
+    if (true)
+    {
+        QMetaObject::invokeMethod(
+            &commander,
+            "openInputPipe",
+            Qt::AutoConnection);
+
+        QMetaObject::invokeMethod(
+            &commander,
+            "openOutputPipe",
+            Qt::AutoConnection);
+
+        QMetaObject::invokeMethod(
+            &commander,
+            "waitNextCommand",
+            Qt::AutoConnection);
+    }
+
+
+
+    QTimer updateTimer;
+    updateTimer.setInterval(1000);
+    window.connect(
+                &updateTimer,
+                SIGNAL(timeout()),
+                SLOT(update_gui_from_settings()),
+                Qt::QueuedConnection);
+
+    window.connect(
+                &updateTimer,
+                SIGNAL(timeout()),
+                SLOT(sendMessages()),
+                Qt::QueuedConnection);
+
+
+
+    updateTimer.start();
+
+
+    window.connect(
+                &commander,
+                SIGNAL(gotNewCommand()),
+                SLOT(set_need_gui_update()),
+                Qt::QueuedConnection);
+
+    window.connect(
+                &commander,
+                SIGNAL(gotNewCommand()),
+                SLOT(set_need_settings_send()),
+                Qt::QueuedConnection);
+
+
     a.exec();//RANK 1
     gather_thread.quit();
     gather_thread.wait();
@@ -252,14 +348,25 @@ int mpiFrontMain(int argc, char *argv[])
     imageQueue input_free_queue;
 
 
+    argParse settings;
 
-    input_free_queue.fillQueue(100,1024*1024);
+    settings.parseArgs(a.arguments());
+
+    settings.report();
+
+    input_free_queue.fillQueue(
+                settings.in_q_length,
+                settings.x_size*settings.y_size);
 
     mpiScatterUser scatter(myMPI,input_free_queue,input_data_queue);
+    QThread scatter_thread;
+    scatter_thread.setObjectName("mpiScatter");
+    scatter.moveToThread(&scatter_thread);
+    scatter_thread.start(QThread::HighestPriority);
 
     pipeReader pipe_in(input_free_queue,input_data_queue);
     QThread pipe_thread;
-
+    pipe_thread.setObjectName("mpiImgPipeIn");
     mpiMesgRecvr recv_thread(0,myMPI);
 
 
@@ -298,7 +405,11 @@ int mpiFrontMain(int argc, char *argv[])
 
 
 
-
+     scatter.connect(
+                 &pipe_in,
+                 SIGNAL(lostImage()),
+                 SLOT(lostImage()),
+                 Qt::QueuedConnection);
 
 
 
@@ -306,7 +417,8 @@ int mpiFrontMain(int argc, char *argv[])
     //stream_in_thread.connect(&w, SIGNAL(sendTime(QString)), SLOT(setText(QString)));
 
 
-    pipe_thread.start(QThread::HighestPriority);
+    pipe_thread.start();
+    recv_thread.setObjectName("mpiRecv");
 
     recv_thread.start();
 

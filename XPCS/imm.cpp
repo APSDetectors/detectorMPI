@@ -91,7 +91,7 @@ void imm::rawToIMM(
         IMM_header->col_end=raw_x_pixels-1;
         IMM_header->corecotick=raw_timestamp;
 
-     IMM_data_short = (unsigned short*)(IMM_image+immHeader::header_size);
+     IMM_data_short = (unsigned short*)( (char*)IMM_image + immHeader::header_size);
 
 
     //
@@ -108,7 +108,7 @@ void imm::rawToIMM(
 
     //no need to copy the image from point a to point b... we already have it
     //pub img 0. we are just making a header.
-    //memcpy((void*)IMM_data_short,(void*)raw_image_us,raw_bytes);
+    memcpy((void*)IMM_data_short,(void*)raw_image_us,raw_bytes);
 
 
 
@@ -136,8 +136,8 @@ qint32 imm::rawToCompIMM(
     qint32 raw_x_pixels,
     qint32 raw_y_pixels,
     qint32 raw_timestamp,
-    qint32 img_index,
-    unsigned char* IMM_image,
+    qint32 max_bytes,// max mem to fill up w/ imm data.
+    unsigned char* IMM_image,// where imm img gets stored
     qint32 *IMM_bytes)
 {
 
@@ -154,6 +154,10 @@ qint32 imm::rawToCompIMM(
     unsigned short* IMM_data_short;
     unsigned char *IMMptr;
     qint32 location;
+
+    // calc how many pixels we have room to store
+    // max_butes - headersize  divided by how many byes per pixel, a short and ain int.
+    int max_pixels = (max_bytes - immHeader::header_size) / (sizeof(int) + sizeof(short)) ;
 
 
     // get memory for new compressed image
@@ -220,7 +224,7 @@ qint32 imm::rawToCompIMM(
 
     if (raw_precision==2)
     {
-        for (k=0;k<num_raw_pixels; k++)
+        for (k=0;(k<num_raw_pixels)&&(num_pixels<max_pixels); k++)
         {
             if (*raw_image_us > threshold)
             {
@@ -261,6 +265,72 @@ qint32 imm::rawToCompIMM(
 
 }
 
+
+/*****************************************************************************************************
+ *
+ *
+ *
+ **************************************************************************************************/
+
+
+void imm::IMMtoRaw(
+        unsigned char* IMM_image,
+        int max_outshorts,
+        unsigned short* outraw_image,
+        int *size_x,
+        int *size_y,
+        int *num_nonzr_pix,
+        int *corecotick)
+{
+    immHeader *IMM_header=(immHeader*)IMM_image;
+
+
+
+    //
+    // Put some magic numbers in the header
+    //
+    *size_x = IMM_header->cols;
+    *size_y = IMM_header->rows;
+
+    int total_pixels = IMM_header->cols * IMM_header->rows;
+
+    //IMM_header->mode = 2;
+    //IMM_header->compression=6;
+
+    *num_nonzr_pix=IMM_header->dlen;
+    *corecotick = IMM_header->corecotick;
+
+
+    if (IMM_header->compression==6)
+    {
+        // IMM_data_short = (unsigned short*)(*IMM_image+compressed_header::header_size);
+        unsigned int* IMM_data_int = (unsigned int*)(IMM_image+immHeader::header_size);
+        unsigned short *pix_val_s=(unsigned short*)(IMM_image+immHeader::header_size + (*num_nonzr_pix)*sizeof(unsigned int));
+
+        int p;
+        //clear out image
+        for ( p=0; p< total_pixels;p++)
+        {
+            outraw_image[p]=0;
+        }
+
+
+        for (p=0; p< (*num_nonzr_pix);p++)
+        {
+            if ((*IMM_data_int) < max_outshorts)
+                outraw_image[ (*IMM_data_int) ] = *pix_val_s;
+
+            IMM_data_int++;
+            pix_val_s++;
+        }
+
+    }
+    else // non compressed imm
+    {
+        memcpy((char*)outraw_image, (IMM_image+immHeader::header_size), (*num_nonzr_pix)*sizeof(short));
+    }
+
+}
 
 /*****************************************************************************************************
  *

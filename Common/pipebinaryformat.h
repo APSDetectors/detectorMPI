@@ -33,10 +33,12 @@ public:
     virtual int readDataBlock(FILE *fp,imageQueueItem *item);
     virtual int writeDataBlock(FILE *fp,imageQueueItem *item);
 
+    virtual int setMessage(int code);
     static char zzz[];
 
-    virtual int checkErrors(int nread);
+    virtual int checkErrors(int nread,FILE* f);
     
+    volatile int message_code;
 };
 
 #endif // PIPEBINARYFORMAT_H
