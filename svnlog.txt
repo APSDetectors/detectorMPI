@@ -1,0 +1,157 @@
+------------------------------------------------------------------------
+r2958 | hammonds | 2016-02-18 10:28:54 -0600 (Thu, 18 Feb 2016) | 2 lines
+
+Added in cmdoutpipe writing number of pixels.
+
+------------------------------------------------------------------------
+r2955 | hammonds | 2016-02-16 20:48:38 -0600 (Tue, 16 Feb 2016) | 2 lines
+
+Add writing message to IOC for full file name and Next file number
+
+------------------------------------------------------------------------
+r2945 | tmadden | 2016-02-08 16:42:09 -0600 (Mon, 08 Feb 2016) | 1 line
+
+added arg for param text tuype, fccd params or pipe plugin (lamda) params opuitput. added all the lamda params text cmd outpit. added gui flag for run state.
+------------------------------------------------------------------------
+r2944 | tmadden | 2016-02-08 14:08:34 -0600 (Mon, 08 Feb 2016) | 1 line
+
+fixed inc file number so the check turns on from text commander
+------------------------------------------------------------------------
+r2938 | tmadden | 2016-02-02 10:19:18 -0600 (Tue, 02 Feb 2016) | 1 line
+
+added raw IMM stuff to py script
+------------------------------------------------------------------------
+r2929 | tmadden | 2016-02-01 14:56:50 -0600 (Mon, 01 Feb 2016) | 1 line
+
+added decent py code for imm check2
+------------------------------------------------------------------------
+r2928 | tmadden | 2016-02-01 14:23:08 -0600 (Mon, 01 Feb 2016) | 1 line
+
+added decent py code for imm check
+------------------------------------------------------------------------
+r2927 | tmadden | 2016-02-01 12:22:59 -0600 (Mon, 01 Feb 2016) | 1 line
+
+updated file number stuff
+------------------------------------------------------------------------
+r2926 | tmadden | 2016-02-01 11:43:50 -0600 (Mon, 01 Feb 2016) | 1 line
+
+updated start up script
+------------------------------------------------------------------------
+r2925 | tmadden | 2016-02-01 10:58:41 -0600 (Mon, 01 Feb 2016) | 1 line
+
+fixed num Inf images check box, added start script for debugging
+------------------------------------------------------------------------
+r2924 | tmadden | 2016-01-28 12:19:49 -0600 (Thu, 28 Jan 2016) | 1 line
+
+simplify capture imm/tiff gui, and fix some bugs. no capture button, no inf capt check. it will cap to files as long as output is set to imm or tuff or pipe.2 
+------------------------------------------------------------------------
+r2923 | tmadden | 2016-01-28 12:18:54 -0600 (Thu, 28 Jan 2016) | 1 line
+
+simplify capture imm/tiff gui, and fix some bugs. no capture button, no inf capt check. it will cap to files as long as output is set to imm or tuff or pipe.
+------------------------------------------------------------------------
+r2920 | hammonds | 2016-01-26 14:48:55 -0600 (Tue, 26 Jan 2016) | 3 lines
+
+Fix problem with frame number order by using specs instead of message.
+Fix pipebinaryformat reader for images not divisible by 1024
+
+------------------------------------------------------------------------
+r2915 | tmadden | 2016-01-25 11:32:24 -0600 (Mon, 25 Jan 2016) | 1 line
+
+hammonds changed pipewriter, madden chaned moiucontrolgui for drawimge, hammonds changed pipe reader prob.
+------------------------------------------------------------------------
+r2890 | tmadden | 2016-01-06 16:41:08 -0600 (Wed, 06 Jan 2016) | 1 line
+
+fixed xpcs mpi for thiese: npw have correct filenames for imm saving. now have gui text update every sec even if images stop. done in different thread on timer. add buffer number in imm saving. disp correctly the last file name full filename on gui in imm and tiff saving. imm tested. 
+------------------------------------------------------------------------
+r2877 | tmadden | 2015-12-14 16:29:21 -0600 (Mon, 14 Dec 2015) | 1 line
+
+fix the brightness contrast, add queue check on resize queue. clear is desc table flag on clear darks, to make sure desc table is recalc'ed
+------------------------------------------------------------------------
+r2876 | tmadden | 2015-12-11 15:09:40 -0600 (Fri, 11 Dec 2015) | 1 line
+
+added brightness/contrast to mpi
+------------------------------------------------------------------------
+r2871 | tmadden | 2015-12-04 15:21:13 -0600 (Fri, 04 Dec 2015) | 1 line
+
+fixed problem w/ closing inuit image pipe when blocked on fread but writing fake data and setting a flag to close
+------------------------------------------------------------------------
+r2868 | tmadden | 2015-12-02 11:54:16 -0600 (Wed, 02 Dec 2015) | 1 line
+
+fixes... borken stuff
+------------------------------------------------------------------------
+r2866 | tmadden | 2015-12-01 16:42:13 -0600 (Tue, 01 Dec 2015) | 1 line
+
+diesable reset qieie, and add some lot images flags, send the img error code and img numbers
+------------------------------------------------------------------------
+r2792 | tmadden | 2015-10-14 16:22:20 -0500 (Wed, 14 Oct 2015) | 1 line
+
+fix imm cpp ptr arithmetic in raw to rawImm
+------------------------------------------------------------------------
+r2769 | tmadden | 2015-10-05 10:38:29 -0500 (Mon, 05 Oct 2015) | 1 line
+
+update to user...
+------------------------------------------------------------------------
+r2765 | tmadden | 2015-09-30 13:51:28 -0500 (Wed, 30 Sep 2015) | 1 line
+
+add img specs to pipereader pipe images
+------------------------------------------------------------------------
+r2764 | tmadden | 2015-09-29 14:10:31 -0500 (Tue, 29 Sep 2015) | 1 line
+
+fixes to xpcs mpi
+------------------------------------------------------------------------
+r2760 | tmadden | 2015-09-28 17:01:06 -0500 (Mon, 28 Sep 2015) | 1 line
+
+fixes to xpcs- slowing thread fixed
+------------------------------------------------------------------------
+r2756 | tmadden | 2015-09-25 16:45:26 -0500 (Fri, 25 Sep 2015) | 1 line
+
+updates to mpi=---add image disp timer, add release build
+------------------------------------------------------------------------
+r2755 | tmadden | 2015-09-25 14:43:45 -0500 (Fri, 25 Sep 2015) | 1 line
+
+bug fixes in xpcs mpi, add iocfccd2 build user file
+------------------------------------------------------------------------
+r2754 | tmadden | 2015-09-25 09:43:19 -0500 (Fri, 25 Sep 2015) | 1 line
+
+xpcs fix
+------------------------------------------------------------------------
+r2746 | tmadden | 2015-09-23 09:54:21 -0500 (Wed, 23 Sep 2015) | 1 line
+
+got xpcs mpi working pretty good... 
+------------------------------------------------------------------------
+r2743 | tmadden | 2015-09-22 16:37:23 -0500 (Tue, 22 Sep 2015) | 1 line
+
+updates to xpcs
+------------------------------------------------------------------------
+r2742 | tmadden | 2015-09-22 15:36:35 -0500 (Tue, 22 Sep 2015) | 1 line
+
+many fixes to xpcsmpi
+------------------------------------------------------------------------
+r2741 | tmadden | 2015-09-21 17:03:52 -0500 (Mon, 21 Sep 2015) | 1 line
+
+fixes to dark... imm , file writer
+------------------------------------------------------------------------
+r2739 | tmadden | 2015-09-17 16:18:52 -0500 (Thu, 17 Sep 2015) | 1 line
+
+fixes to xpcs mpi add hpw it wors
+------------------------------------------------------------------------
+r2734 | tmadden | 2015-09-16 17:14:53 -0500 (Wed, 16 Sep 2015) | 1 line
+
+updates to mpi 
+------------------------------------------------------------------------
+r2733 | tmadden | 2015-09-15 17:07:47 -0500 (Tue, 15 Sep 2015) | 1 line
+
+fixes
+------------------------------------------------------------------------
+r2730 | tmadden | 2015-09-14 16:08:10 -0500 (Mon, 14 Sep 2015) | 1 line
+
+xpcs updates
+------------------------------------------------------------------------
+r2723 | tmadden | 2015-09-08 16:33:55 -0500 (Tue, 08 Sep 2015) | 1 line
+
+updates for Xpcs det mpi. add descramble, commander for text contorl, endian
+------------------------------------------------------------------------
+r2715 | tmadden | 2015-09-02 15:53:20 -0500 (Wed, 02 Sep 2015) | 1 line
+
+add detector mpi SW to svn. same as github version
+------------------------------------------------------------------------
